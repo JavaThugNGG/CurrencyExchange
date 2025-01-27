@@ -42,24 +42,29 @@ public class CurrencyServlet extends HttpServlet {
 
             String pathInfo = request.getPathInfo();
 
-            if (pathInfo != null && !pathInfo.isEmpty()) {      //случаи currencies и currencies/
+            if (pathInfo != null && !pathInfo.equals("/")) {      //случаи currencies и currencies/
+                response.getWriter().println(pathInfo);
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Currencies WHERE code = ?");
                 String currencyCode = pathInfo.substring(1);  //извлекаем строку начиная с индекса 1
                 preparedStatement.setString(1, currencyCode);  // Параметр "?" заменится на значение переменной currencyCode
                 ResultSet resultSet = preparedStatement.executeQuery();
 
+                if (resultSet.next()) {
                 JSONObject currencyObject = new JSONObject();
                 currencyObject.put("id", resultSet.getString("id"));
                 currencyObject.put("name", resultSet.getString("full_name"));
                 currencyObject.put("code", resultSet.getString("code"));
                 currencyObject.put("sign", resultSet.getString("sign"));
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
+                    response.getWriter().println("Currency not found");
+                }
 
-                out.println(currencyObject);
 
                 statement.close();
             } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);  // 400
                 response.getWriter().println("No currency code provided");
-                //нужно будет выйти отсюда нахуй
             }
 
         } catch (SQLException e) {
