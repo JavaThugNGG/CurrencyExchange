@@ -29,6 +29,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.5</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.30</version> <!-- Замените на последнюю доступную версию -->
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

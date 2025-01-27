@@ -7,8 +7,9 @@ import java.sql.SQLException;
 
 public class DatabaseInitializer {
 
-    public static void setupDatabase() {
+    public static void setupDatabase() throws ClassNotFoundException {
         String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
+
 
         try (Connection conn = DriverManager.getConnection(dbUrl)) {
 
@@ -43,7 +44,54 @@ public class DatabaseInitializer {
         }
     }
 
+    public static void setupDatabase2() {
+        String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
+
+        try (Connection conn = DriverManager.getConnection(dbUrl)) {
+
+            if (conn != null) {
+                System.out.println("Соединение с базой данных установлено.");
+
+                String createExchangeRatesTableSQL = "CREATE TABLE ExchangeRates ("
+                        + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + "BaseCurrencyId INTEGER NOT NULL, "
+                        + "TargetCurrencyId INTEGER NOT NULL, "
+                        + "Rate DECIMAL(6) NOT NULL, "
+                        + "UNIQUE(BaseCurrencyId, TargetCurrencyId), "
+                        + "FOREIGN KEY (BaseCurrencyId) REFERENCES Currencies(id), "
+                        + "FOREIGN KEY (TargetCurrencyId) REFERENCES Currencies(id));";
+
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(createExchangeRatesTableSQL);
+                    System.out.println("Таблица ExchangeRates создана или уже существует.");
+                }
+
+
+                String insertExchangeRatesDataSQL = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES "
+                        + "(1, 2, 0.85), "  // USD -> EUR
+                        + "(1, 3, 0.75), "  // USD -> GBP
+                        + "(1, 4, 74.32), " // USD -> RUB
+                        + "(2, 1, 1.18), "  // EUR -> USD
+                        + "(2, 3, 0.88), "  // EUR -> GBP
+                        + "(2, 4, 87.65), " // EUR -> RUB
+                        + "(3, 1, 1.33), "  // GBP -> USD
+                        + "(3, 2, 1.14), "  // GBP -> EUR
+                        + "(3, 4, 99.87);"; // GBP -> RUB
+
+                try (Statement stmt = conn.createStatement()) {
+                    stmt.execute(insertExchangeRatesDataSQL);
+                    System.out.println("Данные добавлены в таблицу ExchangeRates.");
+                }
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Ошибка при подключении к базе данных: " + e.getMessage());
+        }
+    }
+
+
     public static void main(String[] args) {
-        setupDatabase();
+        String dbUrl = "jdbc:sqlite:src/main/resources/database.db";
+
     }
 }
