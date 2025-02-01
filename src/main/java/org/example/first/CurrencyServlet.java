@@ -40,6 +40,7 @@ public class CurrencyServlet extends HttpServlet {
         try (Connection connection = DriverManager.getConnection(url)) {
             String pathInfo = request.getPathInfo();
 
+
             if (pathInfo != null && !pathInfo.equals("/")) {
                 String currencyCode = pathInfo.substring(1);
                 String sql = "SELECT * FROM Currencies WHERE code = ?";
