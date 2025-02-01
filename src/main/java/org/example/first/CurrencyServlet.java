@@ -1,20 +1,23 @@
 package org.example.first;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.sqlite.SQLiteConnection;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.sql.*;
+import java.util.Map;
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
@@ -31,46 +34,42 @@ public class CurrencyServlet extends HttpServlet {
         }
 
         String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
-
-        // Устанавливаем тип контента для ответа
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        try {
-            Connection connection = DriverManager.getConnection(url);
-            Statement statement = connection.createStatement();
-
+        try (Connection connection = DriverManager.getConnection(url)) {
             String pathInfo = request.getPathInfo();
 
-            if (pathInfo != null && !pathInfo.equals("/")) {      //случаи currencies и currencies/
-                response.getWriter().println(pathInfo);
-                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Currencies WHERE code = ?");
-                String currencyCode = pathInfo.substring(1);  //извлекаем строку начиная с индекса 1
-                preparedStatement.setString(1, currencyCode);  // Параметр "?" заменится на значение переменной currencyCode
-                ResultSet resultSet = preparedStatement.executeQuery();
+            if (pathInfo != null && !pathInfo.equals("/")) {
+                String currencyCode = pathInfo.substring(1);
+                String sql = "SELECT * FROM Currencies WHERE code = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setString(1, currencyCode);
+                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                        if (resultSet.next()) {
+                            Currency currency = new Currency(
+                                    resultSet.getString("id"),
+                                    resultSet.getString("full_name"),
+                                    resultSet.getString("code"),
+                                    resultSet.getString("sign")
+                            );
 
-                if (resultSet.next()) {
-                JSONObject currencyObject = new JSONObject();
-                currencyObject.put("id", resultSet.getString("id"));
-                currencyObject.put("name", resultSet.getString("full_name"));
-                currencyObject.put("code", resultSet.getString("code"));
-                currencyObject.put("sign", resultSet.getString("sign"));
-                } else {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
-                    response.getWriter().println("Currency not found");
+                            String json = objectMapper.writeValueAsString(currency);
+                            out.println(json);
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            out.println(objectMapper.writeValueAsString(
+                                    Map.of("error", "Currency not found")));
+                        }
+                    }
                 }
-
-
-                statement.close();
             } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);  // 400
-                response.getWriter().println("No currency code provided");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.println(objectMapper.writeValueAsString(
+                        Map.of("error", "No currency code provided")));
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 }
-
-

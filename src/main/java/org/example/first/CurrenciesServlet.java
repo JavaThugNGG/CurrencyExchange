@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.sql.*;
 
+
 @WebServlet(value = "/currencies")
 public class CurrenciesServlet extends HttpServlet {
 
@@ -23,7 +24,6 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
         File dbFile;
         try {
             dbFile = new File(SQLiteConnection.class.getClassLoader().getResource("database.db").toURI());
