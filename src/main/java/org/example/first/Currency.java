@@ -2,14 +2,12 @@ package org.example.first;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({"name", "id", "code", "sign"}) // Указываем порядок
+@JsonPropertyOrder({"id", "name", "code", "sign"}) // Указываем порядок
 public class Currency {
     private String id;
     private String name;
     private String code;
     private String sign;
-
-    public Currency() {}
 
     public Currency(String id, String name, String code, String sign) {
         this.id = id;
