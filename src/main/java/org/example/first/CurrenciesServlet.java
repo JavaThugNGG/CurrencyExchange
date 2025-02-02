@@ -17,7 +17,7 @@ public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = new CurrencyService();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
+        response.setContentType("application/json");//
         PrintWriter out = response.getWriter();
 
         List<Currency> currencies = currencyService.getAllCurrencies();
