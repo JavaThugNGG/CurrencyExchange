@@ -9,7 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
@@ -17,12 +19,19 @@ public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = new CurrencyService();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");//
+        response.setContentType("application/json");
         PrintWriter out = response.getWriter();
-
-        List<Currency> currencies = currencyService.getAllCurrencies();
-        out.println(objectMapper.writeValueAsString(currencies));
+        try {
+            List<Currency> currencies = currencyService.getAllCurrencies();
+            response.setStatus(HttpServletResponse.SC_OK); // 200
+            out.println(objectMapper.writeValueAsString(currencies));
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при получении валюты из базы данных");
+            out.println(objectMapper.writeValueAsString(errorResponse));
+        }
     }
+
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");

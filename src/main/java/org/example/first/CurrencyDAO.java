@@ -7,7 +7,7 @@ import java.util.List;
 public class CurrencyDAO {
     public Currency getByCode(String code) throws SQLException {
         String sql = "SELECT * FROM Currencies WHERE code = ?";
-        try (Connection conn = DataSourceProvider.getConnection();
+        try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -27,7 +27,7 @@ public class CurrencyDAO {
     public List<Currency> getAll() throws SQLException {
         List<Currency> currencies = new ArrayList<>();
         String sql = "SELECT * FROM Currencies";
-        try (Connection conn = DataSourceProvider.getConnection();
+        try (Connection conn = DatabaseConnectionPool.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -44,7 +44,7 @@ public class CurrencyDAO {
 
     public String insert(String fullName, String code, String sign) throws SQLException {
         String sql = "INSERT INTO Currencies (full_name, code, sign) VALUES (?, ?, ?)";
-        try (Connection conn = DataSourceProvider.getConnection();
+        try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, fullName);
             stmt.setString(2, code);

@@ -9,24 +9,22 @@ import java.sql.SQLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class DataSourceProvider {
+public class DatabaseConnectionPool {
     private static HikariDataSource dataSource;
 
     static {
         try {
             Class.forName("org.sqlite.JDBC");
-            URI dbUri = DataSourceProvider.class.getClassLoader().getResource("database.db").toURI();
+            URI dbUri = DatabaseConnectionPool.class.getClassLoader().getResource("database.db").toURI();
             File dbFile = new File(dbUri);
             String databaseUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
 
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(databaseUrl);  // Устанавливаем URL для базы данных
-            config.setMaximumPoolSize(10);   // Максимальное количество соединений в пуле
+            config.setJdbcUrl(databaseUrl);
+            config.setMaximumPoolSize(10);
             dataSource = new HikariDataSource(config);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Ошибка при загрузке базы данных", e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (URISyntaxException | ClassNotFoundException e) {
+            throw new RuntimeException("Ошибка при инициализации базы данных", e);
         }
     }
 

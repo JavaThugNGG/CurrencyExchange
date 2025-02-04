@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-public class DatabaseInitializer {
+public class OldDatabaseFiller {
 
     public static void setupDatabase() throws ClassNotFoundException {
         String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
