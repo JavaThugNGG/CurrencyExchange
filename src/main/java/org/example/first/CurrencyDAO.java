@@ -21,7 +21,7 @@ public class CurrencyDAO {
                 }
             }
         }
-        return null;
+        throw new CurrencyNotFoundException("Currency with code " + code + " not found.");
     }
 
     public List<Currency> getAll() throws SQLException {

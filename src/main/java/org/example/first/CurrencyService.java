@@ -7,12 +7,8 @@ import java.util.List;
 public class CurrencyService {
     private final CurrencyDAO currencyDAO = new CurrencyDAO();
 
-    public Currency getCurrencyByCode(String code) {
-        try {
-            return currencyDAO.getByCode(code);
-        } catch (SQLException e) {
-            throw new RuntimeException("Ошибка получения валюты", e);
-        }
+    public Currency getCurrencyByCode(String code) throws SQLException {
+        return currencyDAO.getByCode(code);
     }
 
     public List<Currency> getAllCurrencies() throws SQLException {
@@ -31,6 +27,10 @@ public class CurrencyService {
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка создания валюты", e);
         }
+    }
+
+    public boolean validatePath(String path) {
+        return path != null && path.matches("^/[A-Z]{3}$");
     }
 
     private void validateCurrency(String fullName, String code, String sign) {
