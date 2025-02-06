@@ -21,7 +21,7 @@ public class CurrencyDAO {
                 }
             }
         }
-        throw new CurrencyNotFoundException("Currency with code " + code + " not found.");
+        throw new CurrencyNotFoundException();
     }
 
     public List<Currency> getAll() throws SQLException {
@@ -43,6 +43,10 @@ public class CurrencyDAO {
     }
 
     public String insert(String fullName, String code, String sign) throws SQLException {
+        if (isCurrencyExist(code)) {
+            throw new CurrencyAlreadyExistsException();
+        }
+
         String sql = "INSERT INTO Currencies (full_name, code, sign) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnectionPool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -51,12 +55,24 @@ public class CurrencyDAO {
             stmt.setString(3, sign);
             stmt.executeUpdate();
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return String.valueOf(generatedKeys.getLong(1));
+                return String.valueOf(generatedKeys.getLong(1));
+            }
+        }
+    }
+
+    private boolean isCurrencyExist(String code) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Currencies WHERE code = ?";
+        try (Connection conn = DatabaseConnectionPool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, code);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                } else {
+                    return false;
                 }
             }
         }
-        return null;
     }
 }
 

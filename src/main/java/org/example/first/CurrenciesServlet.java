@@ -35,28 +35,28 @@ public class CurrenciesServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        String name = request.getParameter("name");
+        String code = request.getParameter("code");
+        String sign = request.getParameter("sign");
+
+        if (!currencyService.isParametersValidated(name, code, sign)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Некорректные аргументы для добавления валюты"))); //400
+            return;
+        }
 
         try {
-            String name = request.getParameter("name");
-            String code = request.getParameter("code");
-            String sign = request.getParameter("sign");
-
-            // Используем сервис для создания валюты
             Currency currency = currencyService.createCurrency(name, code, sign);
-
-            response.setStatus(HttpServletResponse.SC_CREATED); // 201 Created
-            PrintWriter out = response.getWriter();
+            response.setStatus(HttpServletResponse.SC_CREATED);                      // 201 Created
             out.println(objectMapper.writeValueAsString(currency));
-        } catch (IllegalArgumentException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
-        } catch (CurrencyConflictException e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT); // 409 Conflict
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
-        } catch (RuntimeException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500 Internal Server Error
-            response.getWriter().write("{\"error\": \"Ошибка сервера: " + e.getMessage() + "\"}");
+        } catch (CurrencyAlreadyExistsException e) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Данная валюте уже существует в базе данных.")));
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error
+            out.println(objectMapper.writeValueAsString(Map.of("error","Ошибка взаимодействия с базой данных")));
         }
     }
-
 }

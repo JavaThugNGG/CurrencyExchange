@@ -15,38 +15,30 @@ public class CurrencyService {
         return currencyDAO.getAll();
     }
 
-    public Currency createCurrency(String fullName, String code, String sign) {
-        validateCurrency(fullName, code, sign);
-
-        try {
-            if (currencyDAO.getByCode(code) != null) {
-                throw new CurrencyConflictException("Валюта с кодом " + code + " уже существует.");
-            }
+    public Currency createCurrency(String fullName, String code, String sign) throws SQLException, CurrencyAlreadyExistsException {
             String id = currencyDAO.insert(fullName, code, sign);
             return new Currency(id, fullName, code, sign);
-        } catch (SQLException e) {
-            throw new RuntimeException("Ошибка создания валюты", e);
-        }
     }
 
-    public boolean validatePath(String path) {
+    public boolean isPathValidated(String path) {
         return path != null && path.matches("^/[A-Z]{3}$");
     }
 
-    private void validateCurrency(String fullName, String code, String sign) {
-        if (isParameterEmpty(fullName)) {
-            throw new IllegalArgumentException("Полное название валюты (name) обязательно.");
+    public boolean isParametersValidated(String fullName, String code, String sign) {
+        if (isParameterEmpty(fullName) || isParameterEmpty(code) || isParameterEmpty(sign)) {
+            return false;
+        } else {
+        return true;
         }
-        if (isParameterEmpty(code)) {
-            throw new IllegalArgumentException("Код валюты (code) обязателен.");
-        }
-        if (isParameterEmpty(sign)) {
-            throw new IllegalArgumentException("Знак валюты (sign) обязателен.");
-        }
+    }
+
+    public String getCurrencyCodeWithoutSlash(String currencyCode) {
+        return currencyCode.substring(1);
     }
 
     private boolean isParameterEmpty(String value) {
         return value == null || value.trim().isEmpty();
     }
+
 }
 
