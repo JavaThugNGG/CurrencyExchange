@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class DatabaseConnectionPool {
+public class DatabaseConnectionProvider {
     private static HikariDataSource dataSource;
 
     static {
         try {
             Class.forName("org.sqlite.JDBC");
-            URI dbUri = DatabaseConnectionPool.class.getClassLoader().getResource("database.db").toURI();
+            URI dbUri = DatabaseConnectionProvider.class.getClassLoader().getResource("database.db").toURI();
             File dbFile = new File(dbUri);
             String databaseUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
 

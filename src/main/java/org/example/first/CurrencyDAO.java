@@ -6,9 +6,9 @@ import java.util.List;
 
 public class CurrencyDAO {
     public Currency getByCode(String code) throws SQLException {
-        String sql = "SELECT * FROM Currencies WHERE code = ?";
-        try (Connection conn = DatabaseConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String query = "SELECT * FROM Currencies WHERE code = ?";
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -26,10 +26,10 @@ public class CurrencyDAO {
 
     public List<Currency> getAll() throws SQLException {
         List<Currency> currencies = new ArrayList<>();
-        String sql = "SELECT * FROM Currencies";
-        try (Connection conn = DatabaseConnectionPool.getConnection();
+        String query = "SELECT * FROM Currencies";
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 currencies.add(new Currency(
                         rs.getString("id"),
@@ -47,9 +47,9 @@ public class CurrencyDAO {
             throw new CurrencyAlreadyExistsException();
         }
 
-        String sql = "INSERT INTO Currencies (full_name, code, sign) VALUES (?, ?, ?)";
-        try (Connection conn = DatabaseConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String query = "INSERT INTO Currencies (full_name, code, sign) VALUES (?, ?, ?)";
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, fullName);
             stmt.setString(2, code);
             stmt.setString(3, sign);
@@ -61,9 +61,9 @@ public class CurrencyDAO {
     }
 
     private boolean isCurrencyExist(String code) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Currencies WHERE code = ?";
-        try (Connection conn = DatabaseConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String query = "SELECT COUNT(*) FROM Currencies WHERE code = ?";
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, code);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
