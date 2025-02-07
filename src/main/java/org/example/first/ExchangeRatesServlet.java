@@ -22,10 +22,11 @@ public class ExchangeRatesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
+            List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
             response.setStatus(HttpServletResponse.SC_OK);                                    //200
             out.println(objectMapper.writeValueAsString(exchangeRates));
         } catch (SQLException e) {
+            e.printStackTrace(); // для вывода стека ошибки
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);      //500
             out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка, связанная с базой данных")));
         }

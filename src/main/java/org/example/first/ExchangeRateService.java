@@ -6,7 +6,7 @@ import java.util.List;
 public class ExchangeRateService {
     private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
 
-    public List<ExchangeRate> getAllExchangeRates() throws SQLException {
+    public List<ExchangeRateDTO> getAllExchangeRates() throws SQLException {
         return exchangeRateDAO.getAll();
     }
 
