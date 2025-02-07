@@ -29,7 +29,7 @@ public class CurrencyServlet extends HttpServlet {
 
         String currencyCode = currencyService.getCurrencyCodeWithoutSlash(requestPath);
         try {
-            Currency currency = currencyService.getCurrencyByCode(currencyCode);
+            CurrencyDTO currency = currencyService.getCurrencyByCode(currencyCode);
             response.setStatus(HttpServletResponse.SC_OK);                                                          //200
             out.println(objectMapper.writeValueAsString(currency));
         }
@@ -37,7 +37,7 @@ public class CurrencyServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка на уровне базы данных")));   //500
         }
-        catch (CurrencyNotFoundException e) {
+        catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             out.println(objectMapper.writeValueAsString(Map.of("error", "Запрашиваемая валюта не найдена")));  //404
         }

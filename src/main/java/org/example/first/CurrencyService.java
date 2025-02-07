@@ -7,17 +7,21 @@ import java.util.List;
 public class CurrencyService {
     private final CurrencyDAO currencyDAO = new CurrencyDAO();
 
-    public Currency getCurrencyByCode(String code) throws SQLException {
+    public CurrencyDTO getCurrencyByCode(String code) throws SQLException {
         return currencyDAO.getByCode(code);
     }
 
-    public List<Currency> getAllCurrencies() throws SQLException {
+    public CurrencyDTO getCurrencyById(String id) throws SQLException {
+        return currencyDAO.getById(id);
+    }
+
+    public List<CurrencyDTO> getAllCurrencies() throws SQLException {
         return currencyDAO.getAll();
     }
 
-    public Currency createCurrency(String fullName, String code, String sign) throws SQLException, CurrencyAlreadyExistsException {
+    public CurrencyDTO createCurrency(String fullName, String code, String sign) throws SQLException, ElementAlreadyExistsException {
             String id = currencyDAO.insert(fullName, code, sign);
-            return new Currency(id, fullName, code, sign);
+            return new CurrencyDTO(id, fullName, code, sign);
     }
 
     public boolean isPathValidated(String path) {

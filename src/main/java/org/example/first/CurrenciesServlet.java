@@ -22,7 +22,7 @@ public class CurrenciesServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         try {
-            List<Currency> currencies = currencyService.getAllCurrencies();
+            List<CurrencyDTO> currencies = currencyService.getAllCurrencies();
             response.setStatus(HttpServletResponse.SC_OK); // 200
             out.println(objectMapper.writeValueAsString(currencies));
         } catch (SQLException e) {
@@ -48,10 +48,10 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         try {
-            Currency currency = currencyService.createCurrency(name, code, sign);
+            CurrencyDTO currency = currencyService.createCurrency(name, code, sign);
             response.setStatus(HttpServletResponse.SC_CREATED);                      // 201 Created
             out.println(objectMapper.writeValueAsString(currency));
-        } catch (CurrencyAlreadyExistsException e) {
+        } catch (ElementAlreadyExistsException e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
             out.println(objectMapper.writeValueAsString(Map.of("error", "Данная валюте уже существует в базе данных.")));
         } catch (SQLException e) {

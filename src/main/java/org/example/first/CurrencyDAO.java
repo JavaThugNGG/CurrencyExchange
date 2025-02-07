@@ -5,33 +5,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDAO {
-    public Currency getByCode(String code) throws SQLException {
+    public CurrencyDTO getByCode(String code) throws SQLException {
         String query = "SELECT * FROM Currencies WHERE code = ?";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Currency(
+                    return new CurrencyDTO(
                             rs.getString("id"),
                             rs.getString("full_name"),
                             rs.getString("code"),
                             rs.getString("sign")
                     );
+                } else {
+                    throw new ElementNotFoundException();
                 }
             }
         }
-        throw new CurrencyNotFoundException();
     }
 
-    public List<Currency> getAll() throws SQLException {
-        List<Currency> currencies = new ArrayList<>();
+    public List<CurrencyDTO> getAll() throws SQLException {
+        List<CurrencyDTO> currencies = new ArrayList<>();
         String query = "SELECT * FROM Currencies";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                currencies.add(new Currency(
+                currencies.add(new CurrencyDTO(
                         rs.getString("id"),
                         rs.getString("full_name"),
                         rs.getString("code"),
@@ -42,9 +43,29 @@ public class CurrencyDAO {
         return currencies;
     }
 
+    public CurrencyDTO getById(String code) throws SQLException {
+        String query = "SELECT * FROM Currencies WHERE id = ?";
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, code);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new CurrencyDTO(
+                            rs.getString("id"),
+                            rs.getString("full_name"),
+                            rs.getString("code"),
+                            rs.getString("sign")
+                    );
+                } else {
+                    throw new ElementNotFoundException();
+                }
+            }
+        }
+    }
+
     public String insert(String fullName, String code, String sign) throws SQLException {
         if (isCurrencyExist(code)) {
-            throw new CurrencyAlreadyExistsException();
+            throw new ElementAlreadyExistsException();
         }
 
         String query = "INSERT INTO Currencies (full_name, code, sign) VALUES (?, ?, ?)";

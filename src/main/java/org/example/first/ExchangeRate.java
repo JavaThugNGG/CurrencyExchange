@@ -2,6 +2,8 @@ package org.example.first;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.math.BigDecimal;
+
 @JsonPropertyOrder({"id", "baseCurrencyId", "targetCurrencyId", "rate"}) // Указываем порядок
 public class ExchangeRate {
     private String id;
