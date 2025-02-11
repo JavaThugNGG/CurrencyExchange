@@ -11,18 +11,18 @@ public class ExchangeRateDAO {
         List<ExchangeRateDTO> exchangeRates = new ArrayList<>();
         String query = "SELECT " +
                         "er.id AS resultId, " +
-                        "er.Rate AS resultRate, " +
-                            "c1.id AS resultCurrencyId1, " +
-                            "c1.code AS resultCode1, " +
-                            "c1.full_name AS resultFullName1, " +
-                            "c1.sign AS resultSign1, " +
-                            "c2.id AS resultCurrencyId2, " +
-                            "c2.code AS resultCode2, " +
-                            "c2.full_name AS resultFullName2, " +
-                            "c2.sign AS resultSign2 " +
-                        "FROM ExchangeRates er " +
-                        "JOIN Currencies c1 ON er.BaseCurrencyId = c1.id " +
-                        "JOIN Currencies c2 ON er.TargetCurrencyId = c2.id ";
+                        "er.rate AS resultRate, " +
+                        "c1.id AS resultCurrencyId1, " +
+                        "c1.code AS resultCode1, " +
+                        "c1.full_name AS resultFullName1, " +
+                        "c1.sign AS resultSign1, " +
+                        "c2.id AS resultCurrencyId2, " +
+                        "c2.code AS resultCode2, " +
+                        "c2.full_name AS resultFullName2, " +
+                        "c2.sign AS resultSign2 " +
+                        "FROM exchange_rates er " +
+                        "JOIN currencies c1 ON er.base_currency_id = c1.id " +
+                        "JOIN currencies c2 ON er.target_currency_id = c2.id ";
 
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              Statement stmt = conn.createStatement();
@@ -50,9 +50,9 @@ public class ExchangeRateDAO {
     public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         String query = "SELECT " +
                             "er.id AS resultId, " +
-                            "er.BaseCurrencyId AS resultBaseCurrencyId, " +        //как-будто айдишники тут лишние, нет?
-                            "er.TargetCurrencyId AS resultTargetCurrencyId, " +
-                            "er.Rate AS resultRate, " +
+                            "er.base_currency_id AS resultBaseCurrencyId, " +        //как-будто айдишники тут лишние, нет?
+                            "er.target_currency_id AS resultTargetCurrencyId, " +
+                            "er.rate AS resultRate, " +
                                 "c1.id AS resultId1, " +
                                 "c2.id AS resultId2, " +
                                 "c1.code AS resultCode1, " +
@@ -61,9 +61,9 @@ public class ExchangeRateDAO {
                                 "c2.full_name AS resultName2, " +
                                 "c1.sign AS resultSign1, " +
                                 "c2.sign AS resultSign2 " +
-                        "FROM ExchangeRates er " +
-                        "JOIN Currencies c1 ON er.BaseCurrencyId = c1.id " +
-                        "JOIN Currencies c2 ON er.TargetCurrencyId = c2.id " +
+                        "FROM exchange_rates er " +
+                        "JOIN currencies c1 ON er.base_currency_id = c1.id " +
+                        "JOIN currencies c2 ON er.target_currency_id = c2.id " +
                         "WHERE c1.code = ? AND c2.code = ?";
 
         try (Connection conn = DatabaseConnectionProvider.getConnection();

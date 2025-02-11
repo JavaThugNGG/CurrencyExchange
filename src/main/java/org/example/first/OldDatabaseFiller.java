@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class OldDatabaseFiller {
 
     public static void setupDatabase() throws ClassNotFoundException {
-        String dbUrl = "jdbc:sqlite:src/main/resources/database1.db"; // Путь к базе данных
+        String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
 
 
         try (Connection conn = DriverManager.getConnection(dbUrl)) {
@@ -45,7 +45,7 @@ public class OldDatabaseFiller {
     }
 
     public static void setupDatabase2() {
-        String dbUrl = "jdbc:sqlite:src/main/resources/database.db1"; // Путь к базе данных
+        String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
 
         try (Connection conn = DriverManager.getConnection(dbUrl)) {
 
