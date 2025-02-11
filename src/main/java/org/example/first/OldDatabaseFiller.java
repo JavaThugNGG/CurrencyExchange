@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class OldDatabaseFiller {
 
     public static void setupDatabase() throws ClassNotFoundException {
-        String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
+        String dbUrl = "jdbc:sqlite:src/main/resources/database1.db"; // Путь к базе данных
 
 
         try (Connection conn = DriverManager.getConnection(dbUrl)) {
@@ -16,7 +16,7 @@ public class OldDatabaseFiller {
             if (conn != null) {
                 System.out.println("Соединение с базой данных установлено.");
 
-                String createTableSQL = "CREATE TABLE Currencies ("
+                String createTableSQL = "CREATE TABLE currencies ("
                         + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + "code VARCHAR(30) NOT NULL UNIQUE, "
                         + "full_name VARCHAR(30) NOT NULL, "
@@ -27,7 +27,7 @@ public class OldDatabaseFiller {
                     System.out.println("Таблица Currencies создана или уже существует.");
                 }
 
-                String insertDataSQL = "INSERT INTO Currencies (code, full_name, sign) VALUES "
+                String insertDataSQL = "INSERT INTO currencies (code, full_name, sign) VALUES "
                         + "('USD', 'United States Dollar', '$'), "
                         + "('EUR', 'Euro', '€'), "
                         + "('GBP', 'British Pound', '£'), "
@@ -45,21 +45,21 @@ public class OldDatabaseFiller {
     }
 
     public static void setupDatabase2() {
-        String dbUrl = "jdbc:sqlite:src/main/resources/database.db"; // Путь к базе данных
+        String dbUrl = "jdbc:sqlite:src/main/resources/database.db1"; // Путь к базе данных
 
         try (Connection conn = DriverManager.getConnection(dbUrl)) {
 
             if (conn != null) {
                 System.out.println("Соединение с базой данных установлено.");
 
-                String createExchangeRatesTableSQL = "CREATE TABLE ExchangeRates ("
+                String createExchangeRatesTableSQL = "CREATE TABLE exchange_rates ("
                         + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + "BaseCurrencyId INTEGER NOT NULL, "
-                        + "TargetCurrencyId INTEGER NOT NULL, "
-                        + "Rate DECIMAL(6) NOT NULL, "
-                        + "UNIQUE(BaseCurrencyId, TargetCurrencyId), "
-                        + "FOREIGN KEY (BaseCurrencyId) REFERENCES Currencies(id), "
-                        + "FOREIGN KEY (TargetCurrencyId) REFERENCES Currencies(id));";
+                        + "base_currency_id INTEGER NOT NULL, "
+                        + "target_currency_id INTEGER NOT NULL, "
+                        + "rate DECIMAL(6) NOT NULL, "
+                        + "UNIQUE(base_currency_id, target_currency_id), "
+                        + "FOREIGN KEY (base_currency_id) REFERENCES currencies(id), "
+                        + "FOREIGN KEY (target_currency_id) REFERENCES currencies(id));";
 
                 try (Statement stmt = conn.createStatement()) {
                     stmt.execute(createExchangeRatesTableSQL);
@@ -67,7 +67,7 @@ public class OldDatabaseFiller {
                 }
 
 
-                String insertExchangeRatesDataSQL = "INSERT INTO ExchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES "
+                String insertExchangeRatesDataSQL = "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES "
                         + "(1, 2, 0.85), "  // USD -> EUR
                         + "(1, 3, 0.75), "  // USD -> GBP
                         + "(1, 4, 74.32), " // USD -> RUB
@@ -90,8 +90,8 @@ public class OldDatabaseFiller {
     }
 
 
-    public static void main(String[] args) {
-        String dbUrl = "jdbc:sqlite:src/main/resources/database.db";
+    public static void main(String[] args) throws ClassNotFoundException {
+        setupDatabase2();
 
     }
 }
