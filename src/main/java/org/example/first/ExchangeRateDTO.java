@@ -3,7 +3,7 @@ package org.example.first;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
-@JsonPropertyOrder({"id", "baseCurrencyId", "targetCurrencyId", "rate"})
+@JsonPropertyOrder({"id", "baseCurrency", "targetCurrency", "rate"})
 public class ExchangeRateDTO {
     private String id;
     CurrencyDTO baseCurrency;

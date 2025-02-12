@@ -2,24 +2,22 @@ package org.example.first;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 public class ExchangeRateDAO {
 
     public List<ExchangeRateDTO> getAll() throws SQLException {
         List<ExchangeRateDTO> exchangeRates = new ArrayList<>();
-        String query = "SELECT " +
-                        "er.id AS resultId, " +
-                        "er.rate AS resultRate, " +
-                        "c1.id AS resultCurrencyId1, " +
-                        "c1.code AS resultCode1, " +
-                        "c1.full_name AS resultFullName1, " +
-                        "c1.sign AS resultSign1, " +
-                        "c2.id AS resultCurrencyId2, " +
-                        "c2.code AS resultCode2, " +
-                        "c2.full_name AS resultFullName2, " +
-                        "c2.sign AS resultSign2 " +
+        String query =  "SELECT er.id AS exchangeRateId, " +
+                               "er.rate AS exchangeRate, " +
+                               "c1.id AS baseId, " +
+                               "c1.code AS baseCode, " +
+                               "c1.full_name AS baseFullName, " +
+                               "c1.sign AS baseSign, " +
+                               "c2.id AS targetId, " +
+                               "c2.code AS targetCode, " +
+                               "c2.full_name AS targetFullName, " +
+                               "c2.sign AS targetSign " +
                         "FROM exchange_rates er " +
                         "JOIN currencies c1 ON er.base_currency_id = c1.id " +
                         "JOIN currencies c2 ON er.target_currency_id = c2.id ";
@@ -29,18 +27,18 @@ public class ExchangeRateDAO {
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 exchangeRates.add(new ExchangeRateDTO(
-                        rs.getString("resultId"),
+                        rs.getString("exchangeRateId"),
                         new CurrencyDTO(
-                                rs.getString("resultCurrencyId1"),
-                                rs.getString("resultCode1"),
-                                rs.getString("resultFullName1"),
-                                rs.getString("resultSign1")),
+                                rs.getString("baseId"),
+                                rs.getString("baseCode"),
+                                rs.getString("baseFullName"),
+                                rs.getString("baseSign")),
                         new CurrencyDTO(
-                                rs.getString("resultCurrencyId2"),
-                                rs.getString("resultCode2"),
-                                rs.getString("resultFullName2"),
-                                rs.getString("resultSign2")),
-                        rs.getString("resultRate")
+                                rs.getString("targetId"),
+                                rs.getString("targetCode"),
+                                rs.getString("targetFullName"),
+                                rs.getString("targetSign")),
+                        rs.getString("exchangeRate")
                 ));
             }
         }
@@ -48,19 +46,16 @@ public class ExchangeRateDAO {
     }
 
     public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
-        String query = "SELECT " +
-                            "er.id AS resultId, " +
-                            "er.base_currency_id AS resultBaseCurrencyId, " +        //как-будто айдишники тут лишние, нет?
-                            "er.target_currency_id AS resultTargetCurrencyId, " +
-                            "er.rate AS resultRate, " +
-                                "c1.id AS resultId1, " +
-                                "c2.id AS resultId2, " +
-                                "c1.code AS resultCode1, " +
-                                "c2.code AS resultCode2, " +
-                                "c1.full_name AS resultName1, " +
-                                "c2.full_name AS resultName2, " +
-                                "c1.sign AS resultSign1, " +
-                                "c2.sign AS resultSign2 " +
+        String query =  "SELECT er.id AS exchangeRateId, " +
+                               "er.rate AS exchangeRate, " +
+                               "c1.id AS baseId, " +
+                               "c1.code AS baseCode, " +
+                               "c1.full_name AS baseFullName, " +
+                               "c1.sign AS baseSign, " +
+                               "c2.id AS targetId, " +
+                               "c2.code AS targetCode, " +
+                               "c2.full_name AS targetFullName, " +
+                               "c2.sign AS targetSign " +
                         "FROM exchange_rates er " +
                         "JOIN currencies c1 ON er.base_currency_id = c1.id " +
                         "JOIN currencies c2 ON er.target_currency_id = c2.id " +
@@ -74,18 +69,18 @@ public class ExchangeRateDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new ExchangeRateDTO(
-                            rs.getString("resultId"),
+                            rs.getString("exchangeRateId"),
                             new CurrencyDTO(
-                                    rs.getString("resultId1"),
-                                    rs.getString("resultCode1"),
-                                    rs.getString("resultName1"),
-                                    rs.getString("resultSign1")),
+                                    rs.getString("baseId"),
+                                    rs.getString("baseCode"),
+                                    rs.getString("baseFullName"),
+                                    rs.getString("baseSign")),
                             new CurrencyDTO(
-                                    rs.getString("resultId2"),
-                                    rs.getString("resultCode2"),
-                                    rs.getString("resultName2"),
-                                    rs.getString("resultSign2")),
-                            rs.getString("resultRate")
+                                    rs.getString("targetId"),
+                                    rs.getString("targetCode"),
+                                    rs.getString("targetFullName"),
+                                    rs.getString("targetSign")),
+                            rs.getString("exchangeRate")
                     );
                 } else {
                     throw new ElementNotFoundException();
