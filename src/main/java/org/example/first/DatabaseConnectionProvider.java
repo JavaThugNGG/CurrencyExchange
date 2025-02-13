@@ -24,7 +24,7 @@ public class DatabaseConnectionProvider {
             config.setMaximumPoolSize(10);
             dataSource = new HikariDataSource(config);
         } catch (URISyntaxException | ClassNotFoundException e) {
-            throw new RuntimeException("Ошибка при инициализации базы данных", e);
+            e.printStackTrace();
         }
     }
 

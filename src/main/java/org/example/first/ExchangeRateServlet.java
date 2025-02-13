@@ -41,6 +41,7 @@ public class ExchangeRateServlet extends HttpServlet {
             e.printStackTrace(); // для вывода стека ошибки
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка в базе данных")));
+            e.printStackTrace();
         }
     }
 }
