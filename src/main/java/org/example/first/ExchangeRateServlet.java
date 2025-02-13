@@ -37,10 +37,13 @@ public class ExchangeRateServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);          //200
             out.println(objectMapper.writeValueAsString(exchangeRate));
 
+        } catch (ElementNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);  //404
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Элемент не найден")));
+
         } catch (SQLException e) {
-            e.printStackTrace(); // для вывода стека ошибки
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка в базе данных")));
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка в базе данных")));   //500
             e.printStackTrace();
         }
     }
