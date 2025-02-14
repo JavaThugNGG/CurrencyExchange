@@ -90,10 +90,6 @@ public class ExchangeRateDAO {
     }
 
     public void updateRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
-        if (!isRateExist(baseCurrencyCode, targetCurrencyCode)) {
-            throw new ElementNotFoundException();
-        }
-
         String query = "UPDATE exchange_rates " +
                 "SET rate = ? " +
                 "WHERE base_currency_id = (SELECT id FROM currencies WHERE code = ?) " +
@@ -108,11 +104,32 @@ public class ExchangeRateDAO {
         }
     }
 
-    private boolean isRateExist(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public void insert(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+        String query =  "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) " +
+                        "VALUES (" +
+                            "(SELECT id FROM currencies WHERE code = ?), " +
+                            "(SELECT id FROM currencies WHERE code = ?), " +
+                            "? " +
+                        ")";
+
+        try (Connection conn = DatabaseConnectionProvider.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, baseCurrencyCode);
+            stmt.setString(2, targetCurrencyCode);
+            stmt.setString(3, rate);
+            stmt.executeUpdate();
+        }
+    }
+
+    public boolean isExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         String query =  "SELECT id " +
                         "FROM exchange_rates " +
-                        "WHERE base_currency_id = ? " +
-                        "AND target_currency_id = ?";
+                        "WHERE base_currency_id = (SELECT id " +
+                                                  "FROM currencies " +
+                                                  "WHERE code = ?) " +
+                        "AND target_currency_id = (SELECT id " +
+                                                  "FROM currencies " +
+                                                  "WHERE code = ?)";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);

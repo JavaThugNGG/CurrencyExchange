@@ -19,7 +19,10 @@ public class CurrencyService {
         return currencyDAO.getAll();
     }
 
-    public CurrencyDTO createCurrency(String fullName, String code, String sign) throws SQLException, ElementAlreadyExistsException {
+    public CurrencyDTO putCurrency(String fullName, String code, String sign) throws SQLException, ElementAlreadyExistsException {
+        if (currencyDAO.isExists(code)) {
+            throw new ElementAlreadyExistsException();
+        }
             String id = currencyDAO.insert(fullName, code, sign);
             return new CurrencyDTO(id, fullName, code, sign);
     }

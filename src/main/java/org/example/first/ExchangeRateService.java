@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ExchangeRateService {
     private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
+    private final CurrencyDAO currencyDAO = new CurrencyDAO();
 
     public List<ExchangeRateDTO> getAllExchangeRates() throws SQLException {
         return exchangeRateDAO.getAll();
@@ -35,6 +36,19 @@ public class ExchangeRateService {
     }
 
     public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+        if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
+            throw new ElementAlreadyExistsException();
+        }
         exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
+    }
+
+    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+        if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
+            throw new ElementAlreadyExistsException();
+        }
+        if (!currencyDAO.isExists(baseCurrencyCode) || !currencyDAO.isExists(targetCurrencyCode)) {
+            throw new ElementNotFoundException();
+        }
+        exchangeRateDAO.insert(baseCurrencyCode, targetCurrencyCode, rate);
     }
 }

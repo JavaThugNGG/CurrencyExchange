@@ -49,7 +49,7 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         try {
-            CurrencyDTO currency = currencyService.createCurrency(name, code, sign);
+            CurrencyDTO currency = currencyService.putCurrency(name, code, sign);
             response.setStatus(HttpServletResponse.SC_CREATED);                      // 201 Created
             out.println(objectMapper.writeValueAsString(currency));
         } catch (ElementAlreadyExistsException e) {

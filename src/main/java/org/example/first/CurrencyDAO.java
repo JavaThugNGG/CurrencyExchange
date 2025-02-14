@@ -69,10 +69,6 @@ public class CurrencyDAO {
     }
 
     public String insert(String fullName, String code, String sign) throws SQLException {
-        if (isCurrencyExist(code)) {
-            throw new ElementAlreadyExistsException();
-        }
-
         String query =  "INSERT INTO currencies (full_name, code, sign) " +
                         "VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
@@ -87,7 +83,7 @@ public class CurrencyDAO {
         }
     }
 
-    private boolean isCurrencyExist(String code) throws SQLException {
+    public boolean isExists(String code) throws SQLException {
         String query =  "SELECT COUNT(*) " +
                         "FROM currencies " +
                         "WHERE code = ?";

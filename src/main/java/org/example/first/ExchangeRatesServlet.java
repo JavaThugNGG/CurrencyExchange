@@ -26,10 +26,45 @@ public class ExchangeRatesServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);                                    //200
             out.println(objectMapper.writeValueAsString(exchangeRates));
         } catch (SQLException e) {
-            e.printStackTrace(); // для вывода стека ошибки
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);      //500
             out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка, связанная с базой данных")));
+            e.printStackTrace();
         }
 
+    }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        String baseCurrencyCode = request.getParameter("baseCurrencyCode");
+        String targetCurrencyCode = request.getParameter("targetCurrencyCode");
+        String rate = request.getParameter("rate");
+
+        if (baseCurrencyCode == null || baseCurrencyCode.isEmpty() ||
+                targetCurrencyCode == null || targetCurrencyCode.isEmpty() ||
+                rate == null || rate.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Отсутствует нужное поле формы")));    //400
+            return;
+        }
+
+        try {
+            exchangeRateService.putExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+            response.setStatus(HttpServletResponse.SC_CREATED);                     //201
+            out.println(objectMapper.writeValueAsString(exchangeRate));
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);                                  //500
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка на уровне базы данных")));
+            e.printStackTrace();
+        } catch (ElementAlreadyExistsException e) {
+            response.setStatus(HttpServletResponse.SC_CONFLICT);                              //409
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Валютная пара с таким кодом уже существует")));
+            e.printStackTrace();
+        } catch (ElementNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);       //404
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Одна/обе валютные пары не существуют в бд")));
+            e.printStackTrace();
+        }
     }
 }
