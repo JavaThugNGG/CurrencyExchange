@@ -10,8 +10,12 @@ public class ExchangeRateService {
         return exchangeRateDAO.getAll();
     }
 
-    public boolean isPathValidated(String path) {
+    public boolean isPathValidatedForGet(String path) {
         return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}$");
+    }
+
+    public boolean isPathValidatedForPatch(String path) {
+        return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}");
     }
 
     public String splitBaseCurrency(String path) {
@@ -28,6 +32,9 @@ public class ExchangeRateService {
 
     public ExchangeRateDTO getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         return exchangeRateDAO.getRate(baseCurrencyCode, targetCurrencyCode);
+    }
 
+    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+        exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
     }
 }
