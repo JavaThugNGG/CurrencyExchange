@@ -49,12 +49,12 @@ public class ExchangeRateDAO {
         String query = "SELECT er.id AS exchangeRateId, " +
                 "er.rate AS exchangeRate, " +
                 "c1.id AS baseId, " +
-                "c1.code AS baseCode, " +
                 "c1.full_name AS baseFullName, " +
+                "c1.code AS baseCode, " +
                 "c1.sign AS baseSign, " +
                 "c2.id AS targetId, " +
-                "c2.code AS targetCode, " +
                 "c2.full_name AS targetFullName, " +
+                "c2.code AS targetCode, " +
                 "c2.sign AS targetSign " +
                 "FROM exchange_rates er " +
                 "JOIN currencies c1 ON er.base_currency_id = c1.id " +
