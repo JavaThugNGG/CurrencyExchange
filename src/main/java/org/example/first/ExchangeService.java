@@ -17,8 +17,10 @@ public class ExchangeService {
             } else {
                 if(exchangeRateDAO.isExists(intermediateCurrencyCode, baseCurrencyCode) && exchangeRateDAO.isExists(intermediateCurrencyCode, targetCurrencyCode)) {
                     return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, intermediateCurrencyCode, amount);
+                } else {
+                    throw new ElementNotFoundException();
                 }
             }
-        } throw new SQLException();
+        }
     }
 }

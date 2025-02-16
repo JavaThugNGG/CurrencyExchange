@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.Map;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
@@ -28,9 +29,10 @@ public class ExchangeServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             out.println(objectMapper.writeValueAsString(exchangeDTO));
 
-        } catch (SQLException e) {
+        } catch (SQLException | ElementNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Валюта не найдена")));
             e.printStackTrace();
         }
-
     }
 }
