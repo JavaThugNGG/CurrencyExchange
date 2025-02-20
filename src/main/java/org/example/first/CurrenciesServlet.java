@@ -54,7 +54,7 @@ public class CurrenciesServlet extends HttpServlet {
             out.println(objectMapper.writeValueAsString(currency));
         } catch (ElementAlreadyExistsException e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Данная валюте уже существует в базе данных.")));
+            out.println(objectMapper.writeValueAsString(Map.of("error", "Currency already exists")));
             e.printStackTrace();
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error
