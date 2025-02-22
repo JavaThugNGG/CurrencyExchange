@@ -44,7 +44,7 @@ public class CurrenciesServlet extends HttpServlet {
 
         if (!currencyService.isParametersValidated(name, code, sign)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Некорректные аргументы для добавления валюты"))); //400
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректные аргументы для добавления валюты"))); //400
             return;
         }
 
@@ -58,7 +58,7 @@ public class CurrenciesServlet extends HttpServlet {
             e.printStackTrace();
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error
-            out.println(objectMapper.writeValueAsString(Map.of("error","Ошибка взаимодействия с базой данных")));
+            out.println(objectMapper.writeValueAsString(Map.of("message","Ошибка взаимодействия с базой данных")));
             e.printStackTrace();
         }
     }

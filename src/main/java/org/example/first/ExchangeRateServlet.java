@@ -34,7 +34,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
         if (!exchangeRateService.isPathValidatedForGet(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);       //400
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Некорректный запрос")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректный запрос")));
             return;
         }
 
@@ -49,11 +49,11 @@ public class ExchangeRateServlet extends HttpServlet {
 
         } catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);  //404
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Элемент не найден")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Элемент не найден")));
 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка в базе данных")));   //500
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка в базе данных")));   //500
             e.printStackTrace();
         }
     }
@@ -67,13 +67,13 @@ public class ExchangeRateServlet extends HttpServlet {
 
         if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Неверный адрес запроса")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Неверный адрес запроса")));
             return;
         }
 
         if (rate == null || rate.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Параметр rate не был передан или он пуст")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он пуст")));
             return;
         }
 
@@ -92,7 +92,7 @@ public class ExchangeRateServlet extends HttpServlet {
             e.printStackTrace();
         } catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND); //404
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Валютная пара отсутствует в базе данных")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара отсутствует в базе данных")));
             e.printStackTrace();
         }
 

@@ -23,7 +23,7 @@ public class CurrencyServlet extends HttpServlet {
 
         if (!currencyService.isPathValidated(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Запрос указан некорректно. Пример запроса: ...currency/RUB"))); //400
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрос указан некорректно. Пример запроса: ...currency/RUB"))); //400
             return;
         }
 
@@ -35,12 +35,12 @@ public class CurrencyServlet extends HttpServlet {
         }
         catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Ошибка на уровне базы данных")));   //500
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка на уровне базы данных")));   //500
             e.printStackTrace();
         }
         catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Запрашиваемая валюта не найдена")));  //404
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемая валюта не найдена")));  //404
             e.printStackTrace();
         }
     }
