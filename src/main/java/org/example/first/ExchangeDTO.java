@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class ExchangeDTO {
     private CurrencyDTO baseCurrency;
     private CurrencyDTO targetCurrency;
-    private String rate;
-    private String amount;
-    private String convertedAmount;
+    private double rate;
+    private double amount;
+    private double convertedAmount;
 
-    public ExchangeDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, String rate, String amount, String convertedAmount) {
+    public ExchangeDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate, double amount, double convertedAmount) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
@@ -26,15 +26,15 @@ public class ExchangeDTO {
         this.baseCurrency = baseCurrency;
     }
 
-    public void setRate(String rate) {
+    public void setRate(double rate) {
         this.rate = rate;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public void setConvertedAmount(String convertedAmount) {
+    public void setConvertedAmount(double convertedAmount) {
         this.convertedAmount = convertedAmount;
     }
 
@@ -46,15 +46,15 @@ public class ExchangeDTO {
         return targetCurrency;
     }
 
-    public String getRate() {
+    public double getRate() {
         return rate;
     }
 
-    public String getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public String getConvertedAmount() {
+    public double getConvertedAmount() {
         return convertedAmount;
     }
 }

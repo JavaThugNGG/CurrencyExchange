@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"id", "baseCurrency", "targetCurrency", "rate"})
 public class ExchangeRateDTO {
-    private String id;
+    private long id;
     CurrencyDTO baseCurrency;
     CurrencyDTO targetCurrency;
-    String rate;
+    double rate;
 
-    public ExchangeRateDTO(String id, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, String rate) {
+    public ExchangeRateDTO(long id, CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, double rate) {
         this.id = id;
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
@@ -19,7 +19,7 @@ public class ExchangeRateDTO {
 
 
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -31,11 +31,11 @@ public class ExchangeRateDTO {
         this.targetCurrency = targetCurrency;
     }
 
-    public void setRate(String rate) {
+    public void setRate(double rate) {
         this.rate = rate;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -47,7 +47,7 @@ public class ExchangeRateDTO {
         return targetCurrency;
     }
 
-    public String getRate() {
+    public double getRate() {
         return rate;
     }
 }

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ExchangeDAO {
-    public ExchangeDTO getRate(String baseCurrencyCode, String targetCurrencyCode, String amount) throws SQLException {
+    public ExchangeDTO getRate(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -27,23 +27,20 @@ public class ExchangeDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    String rate = resultSet.getString("rate");
-                    double rateDouble = Double.parseDouble(rate);
-                    double amountDouble = Double.parseDouble(amount);
-                    double convertedAmount = rateDouble * amountDouble;
-                    String convertedAmountString = String.valueOf(convertedAmount);
+                    double rate = resultSet.getDouble("rate");
+                    double convertedAmount = rate * amount;
 
-                    return new ExchangeDTO(new CurrencyDTO(resultSet.getString("baseId"),
+                    return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                                                 resultSet.getString("baseName"),
                                                 resultSet.getString("baseCode"),
                                                 resultSet.getString("baseSign")),
-                            new CurrencyDTO(resultSet.getString("targetId"),
+                            new CurrencyDTO(resultSet.getLong("targetId"),
                                     resultSet.getString("targetName"),
                                     resultSet.getString("targetCode"),
                                     resultSet.getString("targetSign")),
-                                    resultSet.getString("rate"),
+                                    resultSet.getDouble("rate"),
                             amount,
-                            convertedAmountString);
+                            convertedAmount);
 
                 } else {
                     throw new SQLException();
@@ -52,7 +49,7 @@ public class ExchangeDAO {
         }
     }
 
-    public ExchangeDTO getRateFromReverseRate(String baseCurrencyCode, String targetCurrencyCode, String amount) throws SQLException {
+    public ExchangeDTO getRateFromReverseRate(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -73,24 +70,21 @@ public class ExchangeDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    String rate = resultSet.getString("rate");
-                    double rateDouble = Double.parseDouble(rate);
-                    double reversedRateDouble = 1 / rateDouble;
-                    double amountDouble = Double.parseDouble(amount);
-                    double convertedAmount = reversedRateDouble * amountDouble;
-                    String convertedAmountString = String.valueOf(convertedAmount);
+                    double rate = resultSet.getDouble("rate");
+                    double reversedRate = 1 / rate;
+                    double convertedAmount = reversedRate * amount;
 
-                    return new ExchangeDTO(new CurrencyDTO(resultSet.getString("baseId"),
+                    return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                             resultSet.getString("baseName"),
                             resultSet.getString("baseCode"),
                             resultSet.getString("baseSign")),
-                            new CurrencyDTO(resultSet.getString("targetId"),
+                            new CurrencyDTO(resultSet.getLong("targetId"),
                                     resultSet.getString("targetName"),
                                     resultSet.getString("targetCode"),
                                     resultSet.getString("targetSign")),
-                            resultSet.getString("rate"),
+                            resultSet.getDouble("rate"),
                             amount,
-                            convertedAmountString);
+                            convertedAmount);
 
                 } else {
                     throw new SQLException();
@@ -99,7 +93,7 @@ public class ExchangeDAO {
         }
     }
 
-    public ExchangeDTO getRateWithIntermediate(String baseCurrencyCode, String targetCurrencyCode, String intermediateCurrencyCode, String amount) throws SQLException {
+    public ExchangeDTO getRateWithIntermediate(String baseCurrencyCode, String targetCurrencyCode, String intermediateCurrencyCode, double amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -119,14 +113,16 @@ public class ExchangeDAO {
              PreparedStatement stmt2 = conn.prepareStatement(query)) {
             stmt1.setString(1, intermediateCurrencyCode);
             stmt1.setString(2, baseCurrencyCode);
-            String fromId, fromName, fromCode, fromSign, rate1;
+            String fromName, fromCode, fromSign;
+            double rate1;
+            long fromId;
             try (ResultSet resultSet = stmt1.executeQuery()) {
                 if (resultSet.next()) {
-                    fromId = resultSet.getString("targetId");
+                    fromId = resultSet.getLong("targetId");
                     fromName = resultSet.getString("targetName");
                     fromCode = resultSet.getString("targetCode");
                     fromSign = resultSet.getString("targetSign");
-                    rate1 = resultSet.getString("rate");
+                    rate1 = resultSet.getDouble("rate");
                 } else {
                     throw new SQLException();
                 }
@@ -134,32 +130,29 @@ public class ExchangeDAO {
 
             stmt2.setString(1, targetCurrencyCode);
             stmt2.setString(2, intermediateCurrencyCode);
-            String toId, toName, toCode, toSign, rate2;
+            String toName, toCode, toSign;
+            double rate2;
+            long toId;
             try (ResultSet resultSet = stmt2.executeQuery()) {
                 if (resultSet.next()) {
-                    toId = resultSet.getString("targetId");
+                    toId = resultSet.getLong("targetId");
                     toName = resultSet.getString("targetName");
                     toCode = resultSet.getString("targetCode");
                     toSign = resultSet.getString("targetSign");
-                    rate2 = resultSet.getString("rate");
+                    rate2 = resultSet.getDouble("rate");
                 } else {
                     throw new SQLException();
                 }
             }
 
-            double rate1Double = Double.parseDouble(rate1);
-            double rate2Double = Double.parseDouble(rate2);
-            double rateDouble = rate1Double / rate2Double;
-            String rate = String.valueOf(rateDouble);
-            double amountDouble = Double.parseDouble(amount);
-            double convertedAmount = rateDouble * amountDouble;
-            String convertedAmountString = String.valueOf(convertedAmount);
+            double rate = rate1 / rate2;
+            double convertedAmount = rate * amount;
 
             return new ExchangeDTO(new CurrencyDTO(fromId, fromName, fromCode, fromSign),
                     (new CurrencyDTO(toId, toName, toCode, toSign)),
                     rate,
                     amount,
-                    convertedAmountString);
+                    convertedAmount);
         }
 
     }

@@ -62,8 +62,7 @@ public class ExchangeRateServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String requestPath = request.getPathInfo();
-        String rate = request.getParameter("rate");
-        System.out.println(rate);
+        double rate = Double.parseDouble(request.getParameter("rate"));
 
         if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
@@ -71,9 +70,9 @@ public class ExchangeRateServlet extends HttpServlet {
             return;
         }
 
-        if (rate == null || rate.isEmpty()) {
+        if (rate == 0.0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он пуст")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он 0.0")));
             return;
         }
 

@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"id", "name", "code", "sign"}) // Указываем порядок
 public class CurrencyDTO {
-    private String id;
+    private long id;
     private String name;
     private String code;
     private String sign;
 
-    public CurrencyDTO(String id, String name, String code, String sign) {
+    public CurrencyDTO(long id, String name, String code, String sign) {
         this.id = id;
         this.name = name;
         this.code = code;
         this.sign = sign;
     }
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -31,7 +31,7 @@ public class CurrencyDTO {
         this.sign = sign;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 

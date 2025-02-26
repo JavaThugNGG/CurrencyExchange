@@ -38,13 +38,13 @@ public class ExchangeRatesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String baseCurrencyCode = request.getParameter("baseCurrencyCode");
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
-        String rate = request.getParameter("rate");
+        double rate = Double.parseDouble(request.getParameter("rate"));
 
         if (baseCurrencyCode == null || baseCurrencyCode.isEmpty() ||
                 targetCurrencyCode == null || targetCurrencyCode.isEmpty() ||
-                rate == null || rate.isEmpty()) {
+                rate == 0.0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы")));    //400
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или вы указали курс как 0.0")));    //400
             return;
         }
 

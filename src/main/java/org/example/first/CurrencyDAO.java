@@ -15,7 +15,7 @@ public class CurrencyDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new CurrencyDTO(
-                            rs.getString("id"),
+                            rs.getLong("id"),
                             rs.getString("full_name"),
                             rs.getString("code"),
                             rs.getString("sign")
@@ -36,7 +36,7 @@ public class CurrencyDAO {
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 currencies.add(new CurrencyDTO(
-                        rs.getString("id"),
+                        rs.getLong("id"),
                         rs.getString("full_name"),
                         rs.getString("code"),
                         rs.getString("sign")
@@ -56,7 +56,7 @@ public class CurrencyDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new CurrencyDTO(
-                            rs.getString("id"),
+                            rs.getLong("id"),
                             rs.getString("full_name"),
                             rs.getString("code"),
                             rs.getString("sign")
@@ -68,7 +68,7 @@ public class CurrencyDAO {
         }
     }
 
-    public String insert(String fullName, String code, String sign) throws SQLException {
+    public long insert(String fullName, String code, String sign) throws SQLException {
         String query =  "INSERT INTO currencies (full_name, code, sign) " +
                         "VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
@@ -78,7 +78,7 @@ public class CurrencyDAO {
             stmt.setString(3, sign);
             stmt.executeUpdate();
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                return String.valueOf(generatedKeys.getLong(1));
+                return generatedKeys.getLong(1);
             }
         }
     }

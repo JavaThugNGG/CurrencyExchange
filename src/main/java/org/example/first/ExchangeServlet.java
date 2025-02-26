@@ -22,7 +22,7 @@ public class ExchangeServlet extends HttpServlet {
 
         String from = request.getParameter("from");
         String to = request.getParameter("to");
-        String amount = request.getParameter("amount");
+        double amount = Double.parseDouble(request.getParameter("amount"));
 
         try {
             ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);

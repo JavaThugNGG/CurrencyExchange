@@ -26,19 +26,20 @@ public class ExchangeRateDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
+                String newTarget = "-" + rs.getString("targetFullName");
                 exchangeRates.add(new ExchangeRateDTO(
-                        rs.getString("exchangeRateId"),
+                        rs.getLong("exchangeRateId"),
                         new CurrencyDTO(
-                                rs.getString("baseId"),
+                                rs.getLong("baseId"),
                                 rs.getString("baseCode"),
                                 rs.getString("baseFullName"),
                                 rs.getString("baseSign")),
                         new CurrencyDTO(
-                                rs.getString("targetId"),
+                                rs.getLong("targetId"),
                                 rs.getString("targetCode"),
-                                rs.getString("targetFullName"),
+                                newTarget,
                                 rs.getString("targetSign")),
-                        rs.getString("exchangeRate")
+                        rs.getDouble("exchangeRate")
                 ));
             }
         }
@@ -69,18 +70,18 @@ public class ExchangeRateDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new ExchangeRateDTO(
-                            rs.getString("exchangeRateId"),
+                            rs.getLong("exchangeRateId"),
                             new CurrencyDTO(
-                                    rs.getString("baseId"),
+                                    rs.getLong("baseId"),
                                     rs.getString("baseCode"),
                                     rs.getString("baseFullName"),
                                     rs.getString("baseSign")),
                             new CurrencyDTO(
-                                    rs.getString("targetId"),
+                                    rs.getLong("targetId"),
                                     rs.getString("targetCode"),
                                     rs.getString("targetFullName"),
                                     rs.getString("targetSign")),
-                            rs.getString("exchangeRate")
+                            rs.getDouble("exchangeRate")
                     );
                 } else {
                     throw new ElementNotFoundException();
@@ -89,7 +90,7 @@ public class ExchangeRateDAO {
         }
     }
 
-    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
         String query = "UPDATE exchange_rates " +
                 "SET rate = ? " +
                 "WHERE base_currency_id = (SELECT id FROM currencies WHERE code = ?) " +
@@ -97,14 +98,14 @@ public class ExchangeRateDAO {
 
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, rate);
+            stmt.setDouble(1, rate);
             stmt.setString(2, baseCurrencyCode);
             stmt.setString(3, targetCurrencyCode);
             stmt.executeUpdate();
         }
     }
 
-    public void insert(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+    public void insert(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
         String query =  "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) " +
                         "VALUES (" +
                             "(SELECT id FROM currencies WHERE code = ?), " +
@@ -116,7 +117,7 @@ public class ExchangeRateDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-            stmt.setString(3, rate);
+            stmt.setDouble(3, rate);
             stmt.executeUpdate();
         }
     }

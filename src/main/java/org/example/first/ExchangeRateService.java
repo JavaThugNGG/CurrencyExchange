@@ -35,14 +35,14 @@ public class ExchangeRateService {
         return exchangeRateDAO.getRate(baseCurrencyCode, targetCurrencyCode);
     }
 
-    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
         if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
             throw new ElementAlreadyExistsException();
         }
         exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
     }
 
-    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate) throws SQLException {
+    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
         if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
             throw new ElementAlreadyExistsException();
         }

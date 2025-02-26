@@ -11,10 +11,6 @@ public class CurrencyService {
         return currencyDAO.getByCode(code);
     }
 
-    public CurrencyDTO getCurrencyById(String id) throws SQLException {
-        return currencyDAO.getById(id);
-    }
-
     public List<CurrencyDTO> getAllCurrencies() throws SQLException {
         return currencyDAO.getAll();
     }
@@ -23,7 +19,7 @@ public class CurrencyService {
         if (currencyDAO.isExists(code)) {
             throw new ElementAlreadyExistsException();
         }
-            String id = currencyDAO.insert(fullName, code, sign);
+            long id = currencyDAO.insert(fullName, code, sign);
             return new CurrencyDTO(id, fullName, code, sign);
     }
 
