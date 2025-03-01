@@ -47,7 +47,7 @@ public class ExchangeRateDAO {
     }
 
     public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
-        String query = "SELECT er.id AS exchangeRateId, " +
+        String query = "SELECT er.id AS exchangeRateId, " + //
                 "er.rate AS exchangeRate, " +
                 "c1.id AS baseId, " +
                 "c1.full_name AS baseFullName, " +
