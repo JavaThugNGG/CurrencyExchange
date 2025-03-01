@@ -48,6 +48,12 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
+        if (baseCurrencyCode.equals(targetCurrencyCode)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println(objectMapper.writeValueAsString(Map.of("message", "В паре валют не могут быть две одинаковые валюты")));
+            return;
+        }
+
         try {
             exchangeRateService.putExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
             ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
