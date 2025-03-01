@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -70,9 +69,9 @@ public class ExchangeRateServlet extends HttpServlet {
             return;
         }
 
-        if (rate == 0.0) {
+        if (rate <= 0.0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он 0.0")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он некорректный")));
             return;
         }
 

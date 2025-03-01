@@ -42,9 +42,9 @@ public class ExchangeRatesServlet extends HttpServlet {
 
         if (baseCurrencyCode == null || baseCurrencyCode.isEmpty() ||
                 targetCurrencyCode == null || targetCurrencyCode.isEmpty() ||
-                rate == 0.0) {
+                rate <= 0.0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или вы указали курс как 0.0")));    //400
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или введен некорректный курс")));    //400
             return;
         }
 

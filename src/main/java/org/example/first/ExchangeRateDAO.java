@@ -26,7 +26,7 @@ public class ExchangeRateDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                String newTarget = "-" + rs.getString("targetFullName");
+                String newTarget = " - " + rs.getString("targetFullName");
                 exchangeRates.add(new ExchangeRateDTO(
                         rs.getLong("exchangeRateId"),
                         new CurrencyDTO(
