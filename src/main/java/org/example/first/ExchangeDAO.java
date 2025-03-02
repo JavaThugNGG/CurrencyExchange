@@ -29,6 +29,7 @@ public class ExchangeDAO {
                 if (resultSet.next()) {
                     double rate = resultSet.getDouble("rate");
                     double convertedAmount = rate * amount;
+                    double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
 
                     return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                                                 resultSet.getString("baseName"),
@@ -40,7 +41,7 @@ public class ExchangeDAO {
                                     resultSet.getString("targetSign")),
                                     resultSet.getDouble("rate"),
                             amount,
-                            convertedAmount);
+                            roundedConvertedAmount);
 
                 } else {
                     throw new SQLException();
@@ -73,6 +74,7 @@ public class ExchangeDAO {
                     double rate = resultSet.getDouble("rate");
                     double reversedRate = 1 / rate;
                     double convertedAmount = reversedRate * amount;
+                    double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
 
                     return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                             resultSet.getString("baseName"),
@@ -84,7 +86,7 @@ public class ExchangeDAO {
                                     resultSet.getString("targetSign")),
                             resultSet.getDouble("rate"),
                             amount,
-                            convertedAmount);
+                            roundedConvertedAmount);
 
                 } else {
                     throw new SQLException();
@@ -147,12 +149,13 @@ public class ExchangeDAO {
 
             double rate = rate1 / rate2;
             double convertedAmount = rate * amount;
+            double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
 
             return new ExchangeDTO(new CurrencyDTO(fromId, fromName, fromCode, fromSign),
                     (new CurrencyDTO(toId, toName, toCode, toSign)),
                     rate,
                     amount,
-                    convertedAmount);
+                    roundedConvertedAmount);
         }
 
     }

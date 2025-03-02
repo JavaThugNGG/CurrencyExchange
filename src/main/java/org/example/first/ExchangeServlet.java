@@ -23,13 +23,19 @@ public class ExchangeServlet extends HttpServlet {
         String from = request.getParameter("from");
         String to = request.getParameter("to");
 
+        if (exchangeService.isDifferentCurrencies(from, to)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println(objectMapper.writeValueAsString(Map.of("message", "В валютной паре не могут быть две одинаковые валюты")));
+            return;
+        }
+
         if (!exchangeService.validateAmount(request.getParameter("amount"))) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректно указано поле amount")));
             return;
         }
 
-        double amount = Double.parseDouble(request.getParameter("amount"));  //нужно валидировать
+        double amount = Double.parseDouble(request.getParameter("amount"));
 
         try {
             ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);

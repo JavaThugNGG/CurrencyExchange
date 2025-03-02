@@ -11,20 +11,21 @@ public class ExchangeService {
     public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
         if(exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
             return exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
-        } else {
-            if(exchangeRateDAO.isExists(targetCurrencyCode, baseCurrencyCode)) {                 //наверное лучше сделать переименованный метод
-                return exchangeDAO.getRateFromReverseRate(targetCurrencyCode, baseCurrencyCode, amount);
-            } else {
-                if(exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
-                    return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, INTERMEDIATE_CURRENCY_CODE, amount);
-                } else {
-                    throw new ElementNotFoundException();
-                }
-            }
         }
+        if(exchangeRateDAO.isExists(targetCurrencyCode, baseCurrencyCode)) {
+            return exchangeDAO.getRateFromReverseRate(targetCurrencyCode, baseCurrencyCode, amount);
+        }
+        if(exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
+            return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, INTERMEDIATE_CURRENCY_CODE, amount);
+        }
+        throw new ElementNotFoundException();
     }
 
     public boolean validateAmount(String amount) {
-        return amount.matches("\\d+(\\.\\d{1,8})?");
+        return amount.matches("\\d{1,14}(\\.\\d{1,14})?");
+    }
+
+    public boolean isDifferentCurrencies(String from, String to) {
+        return from.equals(to);
     }
 }
