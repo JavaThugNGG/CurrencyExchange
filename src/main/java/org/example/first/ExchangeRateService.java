@@ -51,4 +51,8 @@ public class ExchangeRateService {
         }
         exchangeRateDAO.insert(baseCurrencyCode, targetCurrencyCode, rate);
     }
+
+    public boolean validateParameters(String baseCurrencyCode, String targetCurrencyCode, String rateString) {
+        return baseCurrencyCode.matches("([A-Za-z]{1,3})") && targetCurrencyCode.matches("([A-Za-z]{1,3})") && rateString.matches("\\d+(\\.\\d{1,8})?");
+    }
 }

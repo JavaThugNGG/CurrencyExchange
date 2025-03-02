@@ -25,6 +25,6 @@ public class ExchangeService {
     }
 
     public boolean validateAmount(String amount) {
-        return amount.matches("\\d+(\\.\\d{1,6})?");    //не более 6 цифр после точки
+        return amount.matches("\\d+(\\.\\d{1,8})?");
     }
 }

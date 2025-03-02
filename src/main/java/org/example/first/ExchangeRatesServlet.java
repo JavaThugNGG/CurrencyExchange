@@ -30,7 +30,6 @@ public class ExchangeRatesServlet extends HttpServlet {
             out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка, связанная с базой данных")));
             e.printStackTrace();
         }
-
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -38,15 +37,15 @@ public class ExchangeRatesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String baseCurrencyCode = request.getParameter("baseCurrencyCode");
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
-        double rate = Double.parseDouble(request.getParameter("rate"));
+        String rateString  = request.getParameter("rate");
 
-        if (baseCurrencyCode == null || baseCurrencyCode.isEmpty() ||
-                targetCurrencyCode == null || targetCurrencyCode.isEmpty() ||
-                rate <= 0.0) {
+        if (!exchangeRateService.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или введен некорректный курс")));    //400
             return;
         }
+
+        double rate = Double.parseDouble(rateString);
 
         if (baseCurrencyCode.equals(targetCurrencyCode)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
