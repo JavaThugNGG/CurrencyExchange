@@ -61,7 +61,10 @@ public class ExchangeRateServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String requestPath = request.getPathInfo();
-        double rate = Double.parseDouble(request.getParameter("rate"));
+
+        String path = exchangeRateService.getPathWithoutSlash(requestPath);
+        String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
+        String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
         if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
@@ -69,16 +72,13 @@ public class ExchangeRateServlet extends HttpServlet {
             return;
         }
 
-        if (rate <= 0.0) {
+        if (!exchangeRateService.validateRate(request.getParameter("rate"))) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
             out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он некорректный")));
             return;
         }
 
-        String path = exchangeRateService.getPathWithoutSlash(requestPath);
-        String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
-        String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
-
+        double rate = Double.parseDouble(request.getParameter("rate"));
 
         try {
             exchangeRateService.updateExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
