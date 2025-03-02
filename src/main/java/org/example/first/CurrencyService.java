@@ -27,12 +27,8 @@ public class CurrencyService {
         return path != null && path.matches("^/[A-Z]{3}$");
     }
 
-    public boolean isParametersValidated(String fullName, String code, String sign) {
-        if (isParameterEmpty(fullName) || isParameterEmpty(code) || isParameterEmpty(sign)) {
-            return false;
-        } else {
-        return true;
-        }
+    public boolean validateParameters(String code, String name, String sign) {
+        return code.matches("([A-Za-zА-Яа-яЁё]{1,3})") || name.matches("([A-Za-zА-Яа-яЁё]{1,8})( [A-Za-zА-Яа-яЁё]{1,8}){0,2}") || sign.matches("\\S");
     }
 
     public String getCurrencyCodeWithoutSlash(String currencyCode) {

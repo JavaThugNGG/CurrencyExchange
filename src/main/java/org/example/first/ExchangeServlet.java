@@ -22,7 +22,14 @@ public class ExchangeServlet extends HttpServlet {
 
         String from = request.getParameter("from");
         String to = request.getParameter("to");
-        double amount = Double.parseDouble(request.getParameter("amount"));
+
+        if (!exchangeService.validateAmount(request.getParameter("amount"))) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректно указано поле amount")));
+            return;
+        }
+
+        double amount = Double.parseDouble(request.getParameter("amount"));  //нужно валидировать
 
         try {
             ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);

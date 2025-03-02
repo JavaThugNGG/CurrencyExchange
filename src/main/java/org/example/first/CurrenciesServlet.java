@@ -38,11 +38,11 @@ public class CurrenciesServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        String name = request.getParameter("name");
         String code = request.getParameter("code");
+        String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (!currencyService.isParametersValidated(name, code, sign)) {
+        if (!currencyService.validateParameters(code, name, sign)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректные аргументы для добавления валюты"))); //400
             return;
@@ -54,7 +54,7 @@ public class CurrenciesServlet extends HttpServlet {
             out.println(objectMapper.writeValueAsString(currency));
         } catch (ElementAlreadyExistsException e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
-            out.println(objectMapper.writeValueAsString(Map.of("error", "Currency already exists")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Данная валюта уже существует")));
             e.printStackTrace();
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error

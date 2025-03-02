@@ -46,28 +46,6 @@ public class CurrencyDAO {
         return currencies;
     }
 
-    public CurrencyDTO getById(String code) throws SQLException {
-        String query =  "SELECT * " +
-                        "FROM currencies " +
-                        "WHERE id = ?";
-        try (Connection conn = DatabaseConnectionProvider.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, code);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new CurrencyDTO(
-                            rs.getLong("id"),
-                            rs.getString("full_name"),
-                            rs.getString("code"),
-                            rs.getString("sign")
-                    );
-                } else {
-                    throw new ElementNotFoundException();
-                }
-            }
-        }
-    }
-
     public long insert(String fullName, String code, String sign) throws SQLException {
         String query =  "INSERT INTO currencies (full_name, code, sign) " +
                         "VALUES (?, ?, ?)";
