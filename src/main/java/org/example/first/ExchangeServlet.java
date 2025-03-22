@@ -45,7 +45,6 @@ public class ExchangeServlet extends HttpServlet {
         } catch (SQLException | ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Валюта не найдена")));
-            e.printStackTrace();
         }
     }
 }

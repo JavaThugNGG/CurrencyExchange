@@ -36,12 +36,10 @@ public class CurrencyServlet extends HttpServlet {
         catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка на уровне базы данных")));   //500
-            e.printStackTrace();
         }
         catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемая валюта не найдена")));  //404
-            e.printStackTrace();
         }
     }
 

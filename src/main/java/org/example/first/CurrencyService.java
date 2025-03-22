@@ -34,10 +34,5 @@ public class CurrencyService {
     public String getCurrencyCodeWithoutSlash(String currencyCode) {
         return currencyCode.substring(1);
     }
-
-    private boolean isParameterEmpty(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
 }
 

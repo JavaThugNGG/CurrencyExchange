@@ -30,7 +30,6 @@ public class CurrenciesServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
             Map<String, String> errorResponse = Map.of("message", "Ошибка при получении валюты из базы данных");
             out.println(objectMapper.writeValueAsString(errorResponse));
-            e.printStackTrace();
         }
     }
 
@@ -56,11 +55,9 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (ElementAlreadyExistsException e) {
             response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
             out.println(objectMapper.writeValueAsString(Map.of("message", "Данная валюта уже существует")));
-            e.printStackTrace();
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error
             out.println(objectMapper.writeValueAsString(Map.of("message","Ошибка взаимодействия с базой данных")));
-            e.printStackTrace();
         }
     }
 }
