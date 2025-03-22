@@ -39,7 +39,7 @@ public class ExchangeRateDAO {
                                 rs.getString("targetCode"),
                                 newTarget,
                                 rs.getString("targetSign")),
-                        rs.getDouble("exchangeRate")
+                        rs.getBigDecimal("exchangeRate")
                 ));
             }
         }
@@ -81,7 +81,7 @@ public class ExchangeRateDAO {
                                     rs.getString("targetCode"),
                                     rs.getString("targetFullName"),
                                     rs.getString("targetSign")),
-                            rs.getDouble("exchangeRate")
+                            rs.getBigDecimal("exchangeRate")
                     );
                 } else {
                     throw new ElementNotFoundException();

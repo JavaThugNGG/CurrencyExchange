@@ -1,12 +1,14 @@
 package org.example.first;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.math.RoundingMode;
 
 public class ExchangeDAO {
-    public ExchangeDTO getRate(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
+    public ExchangeDTO getRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -27,9 +29,9 @@ public class ExchangeDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    double rate = resultSet.getDouble("rate");
-                    double convertedAmount = rate * amount;
-                    double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
+                    BigDecimal rate = resultSet.getBigDecimal("rate");
+                    BigDecimal convertedAmount = rate.multiply(amount);
+                    BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
 
                     return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                                                 resultSet.getString("baseName"),
@@ -39,7 +41,7 @@ public class ExchangeDAO {
                                     resultSet.getString("targetName"),
                                     resultSet.getString("targetCode"),
                                     resultSet.getString("targetSign")),
-                                    resultSet.getDouble("rate"),
+                                    resultSet.getBigDecimal("rate"),
                             amount,
                             roundedConvertedAmount);
 
@@ -50,7 +52,7 @@ public class ExchangeDAO {
         }
     }
 
-    public ExchangeDTO getRateFromReverseRate(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
+    public ExchangeDTO getRateFromReverseRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -71,10 +73,11 @@ public class ExchangeDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    double rate = resultSet.getDouble("rate");
-                    double reversedRate = 1 / rate;
-                    double convertedAmount = reversedRate * amount;
-                    double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
+                    BigDecimal rate = resultSet.getBigDecimal("rate");
+                    BigDecimal reversedRate = BigDecimal.ONE.divide(rate, 8, RoundingMode.HALF_UP);
+                    BigDecimal convertedAmount = reversedRate.multiply(amount);
+                    BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
+
 
                     return new ExchangeDTO(new CurrencyDTO(resultSet.getLong("baseId"),
                             resultSet.getString("baseName"),
@@ -84,7 +87,7 @@ public class ExchangeDAO {
                                     resultSet.getString("targetName"),
                                     resultSet.getString("targetCode"),
                                     resultSet.getString("targetSign")),
-                            resultSet.getDouble("rate"),
+                            resultSet.getBigDecimal("rate"),
                             amount,
                             roundedConvertedAmount);
 
@@ -95,7 +98,7 @@ public class ExchangeDAO {
         }
     }
 
-    public ExchangeDTO getRateWithIntermediate(String baseCurrencyCode, String targetCurrencyCode, String intermediateCurrencyCode, double amount) throws SQLException {
+    public ExchangeDTO getRateWithIntermediate(String baseCurrencyCode, String targetCurrencyCode, String intermediateCurrencyCode, BigDecimal amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -116,7 +119,7 @@ public class ExchangeDAO {
             stmt1.setString(1, intermediateCurrencyCode);
             stmt1.setString(2, baseCurrencyCode);
             String fromName, fromCode, fromSign;
-            double rate1;
+            BigDecimal rate1;
             long fromId;
             try (ResultSet resultSet = stmt1.executeQuery()) {
                 if (resultSet.next()) {
@@ -124,7 +127,7 @@ public class ExchangeDAO {
                     fromName = resultSet.getString("targetName");
                     fromCode = resultSet.getString("targetCode");
                     fromSign = resultSet.getString("targetSign");
-                    rate1 = resultSet.getDouble("rate");
+                    rate1 = resultSet.getBigDecimal("rate");
                 } else {
                     throw new SQLException();
                 }
@@ -133,7 +136,7 @@ public class ExchangeDAO {
             stmt2.setString(1, targetCurrencyCode);
             stmt2.setString(2, intermediateCurrencyCode);
             String toName, toCode, toSign;
-            double rate2;
+            BigDecimal rate2;
             long toId;
             try (ResultSet resultSet = stmt2.executeQuery()) {
                 if (resultSet.next()) {
@@ -141,15 +144,15 @@ public class ExchangeDAO {
                     toName = resultSet.getString("targetName");
                     toCode = resultSet.getString("targetCode");
                     toSign = resultSet.getString("targetSign");
-                    rate2 = resultSet.getDouble("rate");
+                    rate2 = resultSet.getBigDecimal("rate");
                 } else {
                     throw new SQLException();
                 }
             }
 
-            double rate = rate1 / rate2;
-            double convertedAmount = rate * amount;
-            double roundedConvertedAmount = Math.round(convertedAmount * 100.0) / 100.0;
+            BigDecimal rate = rate1.divide(rate2, 8, RoundingMode.HALF_UP);
+            BigDecimal convertedAmount = rate.multiply(rate2);
+            BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
 
             return new ExchangeDTO(new CurrencyDTO(fromId, fromName, fromCode, fromSign),
                     (new CurrencyDTO(toId, toName, toCode, toSign)),
@@ -157,6 +160,5 @@ public class ExchangeDAO {
                     amount,
                     roundedConvertedAmount);
         }
-
     }
 }

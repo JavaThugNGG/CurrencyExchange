@@ -19,7 +19,6 @@ public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = new CurrencyService();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         try {
