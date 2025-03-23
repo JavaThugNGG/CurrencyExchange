@@ -1,5 +1,6 @@
 package org.example.first;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +90,7 @@ public class ExchangeRateDAO {
         }
     }
 
-    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
+    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
         String query = "UPDATE exchange_rates " +
                 "SET rate = ? " +
                 "WHERE base_currency_id = (SELECT id FROM currencies WHERE code = ?) " +
@@ -97,14 +98,14 @@ public class ExchangeRateDAO {
 
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setDouble(1, rate);
+            stmt.setBigDecimal(1, rate);
             stmt.setString(2, baseCurrencyCode);
             stmt.setString(3, targetCurrencyCode);
             stmt.executeUpdate();
         }
     }
 
-    public void insert(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
+    public void insert(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
         String query =  "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) " +
                         "VALUES (" +
                             "(SELECT id FROM currencies WHERE code = ?), " +
@@ -116,7 +117,7 @@ public class ExchangeRateDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-            stmt.setDouble(3, rate);
+            stmt.setBigDecimal(3, rate);
             stmt.executeUpdate();
         }
     }

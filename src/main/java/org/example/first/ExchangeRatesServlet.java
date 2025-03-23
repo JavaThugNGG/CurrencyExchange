@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         String baseCurrencyCode = request.getParameter("baseCurrencyCode");
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
-        String rateString  = request.getParameter("rate");
+        String rateString = request.getParameter("rate");
 
         if (!exchangeRateService.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -44,13 +45,13 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
-        double rate = Double.parseDouble(rateString);
-
         if (baseCurrencyCode.equals(targetCurrencyCode)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара должна состоять из разных валют")));
             return;
         }
+
+        BigDecimal rate = new BigDecimal(rateString);
 
         try {
             exchangeRateService.putExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);

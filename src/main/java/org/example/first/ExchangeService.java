@@ -9,15 +9,15 @@ public class ExchangeService {
     private final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
 
-    public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, double amount) throws SQLException {
+    public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         if(exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
-            return exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, BigDecimal.valueOf(amount));
+            return exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
         }
         if(exchangeRateDAO.isExists(targetCurrencyCode, baseCurrencyCode)) {
-            return exchangeDAO.getRateFromReverseRate(targetCurrencyCode, baseCurrencyCode, BigDecimal.valueOf(amount));
+            return exchangeDAO.getRateFromReverseRate(targetCurrencyCode, baseCurrencyCode, amount);
         }
         if(exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
-            return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, INTERMEDIATE_CURRENCY_CODE, BigDecimal.valueOf(amount));
+            return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, INTERMEDIATE_CURRENCY_CODE, amount);
         }
         throw new ElementNotFoundException();
     }

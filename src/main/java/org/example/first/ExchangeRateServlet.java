@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -26,8 +27,6 @@ public class ExchangeRateServlet extends HttpServlet {
             this.doPatch(req, resp);
         }
     }
-
-
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
@@ -79,22 +78,21 @@ public class ExchangeRateServlet extends HttpServlet {
         String requestData = requestBody.toString();
 
         // Преобразуем строку запроса в параметры (если они в формате URL-encoded)
-        String rateStr = null;
+        String rateString = null;
         for (String param : requestData.split("&")) {
             String[] keyValue = param.split("=");
             if (keyValue.length == 2 && "rate".equals(keyValue[0])) {
-                rateStr = keyValue[1];
+                rateString = keyValue[1];
             }
         }
 
-        if (!exchangeRateService.isPathValidatedForPatch(requestPath) || !exchangeRateService.validateRate(rateStr)) {
+        if (!exchangeRateService.isPathValidatedForPatch(requestPath) || !exchangeRateService.validateRate(rateString)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
             out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или параметр rate некорректный")));
             return;
         }
 
-        // Парсим параметр "rate"
-        double rate = Double.parseDouble(rateStr);
+        BigDecimal rate = new BigDecimal(request.getParameter("rate"));
 
         try {
             // Обновление обменного курса

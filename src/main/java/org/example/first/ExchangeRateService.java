@@ -1,5 +1,6 @@
 package org.example.first;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class ExchangeRateService {
         return exchangeRateDAO.getRate(baseCurrencyCode, targetCurrencyCode);
     }
 
-    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
+    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
         if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
             exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
         } else {
@@ -43,7 +44,7 @@ public class ExchangeRateService {
         }
     }
 
-    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
+    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
         if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
             throw new ElementAlreadyExistsException();
         }

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class ExchangeServlet extends HttpServlet {
             return;
         }
 
-        double amount = Double.parseDouble(request.getParameter("amount"));
+        BigDecimal amount = new BigDecimal(request.getParameter("amount"));
 
         try {
             ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);
