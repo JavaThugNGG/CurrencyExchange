@@ -36,7 +36,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
         if (!exchangeRateService.isPathValidatedForGet(requestPath)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);       //400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректный запрос")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Указан некорректный URL запроса")));
             return;
         }
 
@@ -51,11 +51,11 @@ public class ExchangeRateServlet extends HttpServlet {
 
         } catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);  //404
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Элемент не найден")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемый элемент не найден")));
 
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка в базе данных")));   //500
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));   //500
         }
     }
 
@@ -67,8 +67,6 @@ public class ExchangeRateServlet extends HttpServlet {
         String path = exchangeRateService.getPathWithoutSlash(requestPath);
         String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
-
-        //где-то здесь должен быть validate parameters
 
         // Чтение тела запроса для извлечения параметров
         StringBuilder requestBody = new StringBuilder();
@@ -106,7 +104,7 @@ public class ExchangeRateServlet extends HttpServlet {
             out.println(objectMapper.writeValueAsString(updatedRate));
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при обновлении данных")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));
         } catch (ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
             out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара отсутствует в базе данных")));

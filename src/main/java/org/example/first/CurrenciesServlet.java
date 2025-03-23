@@ -27,7 +27,7 @@ public class CurrenciesServlet extends HttpServlet {
             out.println(objectMapper.writeValueAsString(currencies));
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
-            Map<String, String> errorResponse = Map.of("message", "Ошибка при получении валюты из базы данных");
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
             out.println(objectMapper.writeValueAsString(errorResponse));
         }
     }

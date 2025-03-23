@@ -25,13 +25,13 @@ public class ExchangeServlet extends HttpServlet {
 
         if (exchangeService.isDifferentCurrencies(from, to)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "В валютной паре не могут быть две одинаковые валюты")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара должна состоять из разных валют")));
             return;
         }
 
         if (!exchangeService.validateAmount(request.getParameter("amount"))) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректно указано поле amount")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректное значение поля amount")));
             return;
         }
 
@@ -44,7 +44,7 @@ public class ExchangeServlet extends HttpServlet {
 
         } catch (SQLException | ElementNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Валюта не найдена")));
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемая валюта не найдена")));
         }
     }
 }
