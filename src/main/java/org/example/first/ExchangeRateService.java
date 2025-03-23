@@ -37,9 +37,10 @@ public class ExchangeRateService {
 
     public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
         if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
-            throw new ElementAlreadyExistsException();
+            exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
+        } else {
+            throw new ElementNotFoundException();
         }
-        exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
     }
 
     public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, double rate) throws SQLException {
@@ -57,6 +58,6 @@ public class ExchangeRateService {
     }
 
     public boolean validateRate(String rate) {
-        return rate!= null;
+        return rate != null;
     }
 }

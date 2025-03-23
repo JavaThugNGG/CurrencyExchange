@@ -26,18 +26,17 @@ public class ExchangeRateDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                String newTarget = " - " + rs.getString("targetFullName");
                 exchangeRates.add(new ExchangeRateDTO(
                         rs.getLong("exchangeRateId"),
                         new CurrencyDTO(
                                 rs.getLong("baseId"),
-                                rs.getString("baseCode"),
                                 rs.getString("baseFullName"),
+                                rs.getString("baseCode"),
                                 rs.getString("baseSign")),
                         new CurrencyDTO(
                                 rs.getLong("targetId"),
+                                rs.getString("targetFullName"),
                                 rs.getString("targetCode"),
-                                newTarget,
                                 rs.getString("targetSign")),
                         rs.getBigDecimal("exchangeRate")
                 ));
