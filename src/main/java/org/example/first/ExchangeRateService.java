@@ -58,6 +58,6 @@ public class ExchangeRateService {
     }
 
     public boolean validateRate(String rate) {
-        return rate != null;
+        return rate != null && rate.matches("\\d+(\\.\\d{1,8})?");
     }
 }

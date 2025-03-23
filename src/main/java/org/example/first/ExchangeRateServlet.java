@@ -68,11 +68,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
-        if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы")));
-            return;
-        }
+        //где-то здесь должен быть validate parameters
 
         // Чтение тела запроса для извлечения параметров
         StringBuilder requestBody = new StringBuilder();
@@ -93,10 +89,9 @@ public class ExchangeRateServlet extends HttpServlet {
             }
         }
 
-        // Проверка, был ли передан параметр "rate" и его корректность
-        if (!exchangeRateService.validateRate(rateStr)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Параметр rate не был передан или он некорректный")));
+        if (!exchangeRateService.isPathValidatedForPatch(requestPath) || !exchangeRateService.validateRate(rateStr)) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
+            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или параметр rate некорректный")));
             return;
         }
 
