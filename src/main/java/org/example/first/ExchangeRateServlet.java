@@ -92,7 +92,7 @@ public class ExchangeRateServlet extends HttpServlet {
             return;
         }
 
-        BigDecimal rate = new BigDecimal(request.getParameter("rate"));
+        BigDecimal rate = new BigDecimal(rateString);
 
         try {
             // Обновление обменного курса
