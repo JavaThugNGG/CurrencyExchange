@@ -16,8 +16,8 @@ import java.util.Map;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final Utils utils = new Utils();
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -29,13 +29,11 @@ public class ExchangeRateServlet extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
         String requestPath = request.getPathInfo();
 
         if (!exchangeRateService.isPathValidatedForGet(requestPath)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);       //400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Указан некорректный URL запроса")));
+            Map<String, String> errorResponse = Map.of("message", "Указан некорректный URL запроса");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
@@ -45,28 +43,33 @@ public class ExchangeRateServlet extends HttpServlet {
 
         try {
             ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
-            response.setStatus(HttpServletResponse.SC_OK);          //200
-            out.println(objectMapper.writeValueAsString(exchangeRate));
+            utils.sendResponse(response, 200, exchangeRate);
 
         } catch (ElementNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);  //404
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемый элемент не найден")));
+            Map<String, String> errorResponse = Map.of("message", "Запрашиваемый элемент не найден");
+            utils.sendResponse(response, 404, errorResponse);
 
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));   //500
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         }
     }
 
     public void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
         String requestPath = request.getPathInfo();
 
         String path = exchangeRateService.getPathWithoutSlash(requestPath);
         String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
+        if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
+            Map<String, String> errorResponse = Map.of("message", "Отсутствует нужное поле формы");
+            utils.sendResponse(response, 400, errorResponse);
+            return;
+        }
+
+
+        //вот это вынесу в отдельный метод!!!!
         // Чтение тела запроса для извлечения параметров
         StringBuilder requestBody = new StringBuilder();
         String line;
@@ -86,26 +89,24 @@ public class ExchangeRateServlet extends HttpServlet {
             }
         }
 
-        if (!exchangeRateService.isPathValidatedForPatch(requestPath) || !exchangeRateService.validateRate(rateString)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    // 400
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует нужное поле формы или параметр rate некорректный")));
+        if (!exchangeRateService.validateRate(rateString)) {
+            Map<String, String> errorResponse = Map.of("message", "параметр rate некорректный");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
         BigDecimal rate = new BigDecimal(rateString);
 
         try {
-            // Обновление обменного курса
             exchangeRateService.updateExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
             ExchangeRateDTO updatedRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
-            response.setStatus(HttpServletResponse.SC_OK);
-            out.println(objectMapper.writeValueAsString(updatedRate));
+            utils.sendResponse(response, 200, updatedRate);
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         } catch (ElementNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара отсутствует в базе данных")));
+            Map<String, String> errorResponse = Map.of("message", "Валютная пара отсутствует в базе данных");
+            utils.sendResponse(response, 404, errorResponse);
         }
     }
 

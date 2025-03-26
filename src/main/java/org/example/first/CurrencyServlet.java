@@ -13,33 +13,31 @@ import java.util.Map;
 
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final CurrencyService currencyService = new CurrencyService();
+    private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
         String requestPath = request.getPathInfo();
 
         if (!currencyService.isPathValidated(requestPath)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректный URL запроса"))); //400
+            Map<String, String> errorResponse = Map.of("message", "Некорректный URL запроса");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
         String currencyCode = currencyService.getCurrencyCodeWithoutSlash(requestPath);
+
         try {
             CurrencyDTO currency = currencyService.getCurrencyByCode(currencyCode);
-            response.setStatus(HttpServletResponse.SC_OK);                                                          //200
-            out.println(objectMapper.writeValueAsString(currency));
+            utils.sendResponse(response, 200, currency);
         }
         catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка взаоимодействия с базой данных")));   //500
+            Map<String, String> errorResponse = Map.of("message", "Ошибка взаоимодействия с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         }
         catch (ElementNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемая валюта не найдена")));  //404
+            Map<String, String> errorResponse = Map.of("message", "Запрашиваемая валюта не найдена");
+            utils.sendResponse(response, 404, errorResponse);
         }
     }
 

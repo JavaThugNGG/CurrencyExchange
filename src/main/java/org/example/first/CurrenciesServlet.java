@@ -15,48 +15,39 @@ import java.util.Map;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final CurrencyService currencyService = new CurrencyService();
+    private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
         try {
             List<CurrencyDTO> currencies = currencyService.getAllCurrencies();
-            response.setStatus(HttpServletResponse.SC_OK); // 200
-            out.println(objectMapper.writeValueAsString(currencies));
+            utils.sendResponse(response, 200, currencies);
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
-            out.println(objectMapper.writeValueAsString(errorResponse));
+            utils.sendResponse(response, 500, errorResponse);
         }
     }
 
-
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
         String code = request.getParameter("code");
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
         if (!currencyService.validateParameters(code, name, sign)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректные аргументы для добавления валюты"))); //400
+            Map<String, String> errorResponse = Map.of("message", "Некорректные аргументы для добавления валюты");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
         try {
             CurrencyDTO currency = currencyService.putCurrency(name, code, sign);
-            response.setStatus(HttpServletResponse.SC_CREATED);                      // 201 Created
-            out.println(objectMapper.writeValueAsString(currency));
+            utils.sendResponse(response, 201, currency);
         } catch (ElementAlreadyExistsException e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);                      //409 already exists
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Данная валюта уже существует")));
+            Map<String, String> errorResponse = Map.of("message", "Данная валюта уже существует");
+            utils.sendResponse(response, 409, errorResponse);
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);        // 500 Internal Server Error
-            out.println(objectMapper.writeValueAsString(Map.of("message","Ошибка взаимодействия с базой данных")));
+            Map<String, String> errorResponse = Map.of("message","Ошибка взаимодействия с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         }
     }
 }

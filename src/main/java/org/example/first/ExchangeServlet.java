@@ -15,24 +15,21 @@ import java.util.Map;
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
     private final ExchangeService exchangeService = new ExchangeService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
         String from = request.getParameter("from");
         String to = request.getParameter("to");
 
         if (exchangeService.isDifferentCurrencies(from, to)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара должна состоять из разных валют")));
+            Map<String, String> errorResponse = Map.of("message", "Валютная пара должна состоять из разных валют");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
         if (!exchangeService.validateAmount(request.getParameter("amount"))) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Некорректное значение поля amount")));
+            Map<String, String> errorResponse = Map.of("message", "Некорректное значение поля amount");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
@@ -40,12 +37,11 @@ public class ExchangeServlet extends HttpServlet {
 
         try {
             ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);
-            response.setStatus(HttpServletResponse.SC_OK);
-            out.println(objectMapper.writeValueAsString(exchangeDTO));
+            utils.sendResponse(response, 200, exchangeDTO);
 
         } catch (SQLException | ElementNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Запрашиваемая валюта не найдена")));
+            Map<String, String> errorResponse = Map.of("message", "Запрашиваемая валюта не найдена");
+            utils.sendResponse(response, 500, errorResponse);
         }
     }
 }

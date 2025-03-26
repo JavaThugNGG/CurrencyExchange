@@ -55,7 +55,7 @@ public class ExchangeRateService {
     }
 
     public boolean validateParameters(String baseCode, String targetCode, String rate) {
-        return baseCode != null & targetCode != null & rate != null & baseCode.matches("([A-Za-z]{1,3})") && targetCode.matches("([A-Za-z]{1,3})") && rate.matches("\\d+(\\.\\d{1,8})?");
+        return baseCode != null & targetCode != null & rate != null & baseCode.matches("([A-Za-z]{1,3})") && targetCode.matches("([A-Za-z]{1,3})") && validateRate(rate);
     }
 
     public boolean validateRate(String rate) {

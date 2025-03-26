@@ -15,39 +15,33 @@ import java.util.Map;
 
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-
         try {
             List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
-            response.setStatus(HttpServletResponse.SC_OK);                                    //200
-            out.println(objectMapper.writeValueAsString(exchangeRates));
+            utils.sendResponse(response, 200, exchangeRates);
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);      //500
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         }
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
         String baseCurrencyCode = request.getParameter("baseCurrencyCode");
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
         String rateString = request.getParameter("rate");
 
         if (!exchangeRateService.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Отсутствует обязательное поле запроса или неверный курс обмена")));    //400
+            Map<String, String> errorResponse = Map.of("message", "Отсутствует обязательное поле запроса или неверный курс обмена");    //400
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
         if (baseCurrencyCode.equals(targetCurrencyCode)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Валютная пара должна состоять из разных валют")));
+            Map<String, String> errorResponse = Map.of("message", "Валютная пара должна состоять из разных валют");
+            utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
@@ -56,17 +50,16 @@ public class ExchangeRatesServlet extends HttpServlet {
         try {
             exchangeRateService.putExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
             ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
-            response.setStatus(HttpServletResponse.SC_CREATED);                     //201
-            out.println(objectMapper.writeValueAsString(exchangeRate));
+            utils.sendResponse(response, 201, exchangeRate);
         } catch (SQLException e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);                                  //500
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Ошибка при взаимодействии с базой данных")));
+            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
+            utils.sendResponse(response, 500, errorResponse);
         } catch (ElementAlreadyExistsException e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);                              //409
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Данная валютная пара уже существует")));
+            Map<String, String> errorResponse = Map.of("message", "Данная валютная пара уже существует");
+            utils.sendResponse(response, 409, errorResponse);
         } catch (ElementNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);       //404
-            out.println(objectMapper.writeValueAsString(Map.of("message", "Одна/обе валюты из валютной пары не существуют в бд")));
+            Map<String, String> errorResponse = Map.of("message", "Одна/обе валюты из валютной пары не существуют в бд");
+            utils.sendResponse(response, 404, errorResponse);
         }
     }
 }
