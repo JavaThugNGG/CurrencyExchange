@@ -1,13 +1,11 @@
 package org.example.first;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +18,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
+            List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllRates();
             utils.sendResponse(response, 200, exchangeRates);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
@@ -48,8 +46,8 @@ public class ExchangeRatesServlet extends HttpServlet {
         BigDecimal rate = new BigDecimal(rateString);
 
         try {
-            exchangeRateService.putExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
-            ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+            exchangeRateService.addExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
             utils.sendResponse(response, 201, exchangeRate);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");

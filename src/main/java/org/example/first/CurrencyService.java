@@ -7,23 +7,23 @@ import java.util.List;
 public class CurrencyService {
     private final CurrencyDAO currencyDAO = new CurrencyDAO();
 
-    public CurrencyDTO getCurrencyByCode(String code) throws SQLException {
-        return currencyDAO.getByCode(code);
+    public CurrencyDTO getCurrency(String code) throws SQLException {
+        return currencyDAO.getCurrency(code);
     }
 
     public List<CurrencyDTO> getAllCurrencies() throws SQLException {
-        return currencyDAO.getAll();
+        return currencyDAO.getAllCurrencies();
     }
 
-    public CurrencyDTO putCurrency(String fullName, String code, String sign) throws SQLException {
-        if (currencyDAO.isExists(code)) {
+    public CurrencyDTO addCurrency(String fullName, String code, String sign) throws SQLException {
+        if (currencyDAO.isCurrencyExists(code)) {
             throw new ElementAlreadyExistsException();
         }
-            long id = currencyDAO.insert(fullName, code, sign);
+            long id = currencyDAO.insertCurrency(fullName, code, sign);
             return new CurrencyDTO(id, fullName, code, sign);
     }
 
-    public boolean isPathValidated(String path) {
+    public boolean validatePath(String path) {
         return path != null && path.matches("^/[A-Z]{3}$");
     }
 

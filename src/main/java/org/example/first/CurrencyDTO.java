@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@JsonPropertyOrder({"id", "name", "code", "sign"}) // Указываем порядок
+@JsonPropertyOrder({"id", "name", "code", "sign"})
 @Data
 @AllArgsConstructor
 public class CurrencyDTO {

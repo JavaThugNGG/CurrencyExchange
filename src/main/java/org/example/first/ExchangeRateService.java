@@ -8,15 +8,15 @@ public class ExchangeRateService {
     private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
     private final CurrencyDAO currencyDAO = new CurrencyDAO();
 
-    public List<ExchangeRateDTO> getAllExchangeRates() throws SQLException {
-        return exchangeRateDAO.getAll();
+    public List<ExchangeRateDTO> getAllRates() throws SQLException {
+        return exchangeRateDAO.getAllRates();
     }
 
-    public boolean isPathValidatedForGet(String path) {
+    public boolean validatePathForGet(String path) {
         return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}$");
     }
 
-    public boolean isPathValidatedForPatch(String path) {
+    public boolean validatePathForPatch(String path) {
         return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}");
     }
 
@@ -32,26 +32,26 @@ public class ExchangeRateService {
         return path.substring(1);
     }
 
-    public ExchangeRateDTO getExchangeRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         return exchangeRateDAO.getRate(baseCurrencyCode, targetCurrencyCode);
     }
 
-    public void updateExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
-        if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
+    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+        if (exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode)) {      //проблема с race condition, но по тз нужно возвращать 404
             exchangeRateDAO.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
         } else {
             throw new ElementNotFoundException();
         }
     }
 
-    public void putExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
-        if (exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
+    public void addExchangeRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+        if (exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             throw new ElementAlreadyExistsException();
         }
-        if (!currencyDAO.isExists(baseCurrencyCode) || !currencyDAO.isExists(targetCurrencyCode)) {
+        if (!currencyDAO.isCurrencyExists(baseCurrencyCode) || !currencyDAO.isCurrencyExists(targetCurrencyCode)) {
             throw new ElementNotFoundException();
         }
-        exchangeRateDAO.insert(baseCurrencyCode, targetCurrencyCode, rate);
+        exchangeRateDAO.insertRate(baseCurrencyCode, targetCurrencyCode, rate);
     }
 
     public boolean validateParameters(String baseCode, String targetCode, String rate) {

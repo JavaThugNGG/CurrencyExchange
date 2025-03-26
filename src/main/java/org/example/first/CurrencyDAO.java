@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDAO {
-    public CurrencyDTO getByCode(String code) throws SQLException {
+    public CurrencyDTO getCurrency(String code) throws SQLException {
         String query =  "SELECT * " +
                         "FROM currencies " +
                         "WHERE code = ?";
@@ -27,7 +27,7 @@ public class CurrencyDAO {
         }
     }
 
-    public List<CurrencyDTO> getAll() throws SQLException {
+    public List<CurrencyDTO> getAllCurrencies() throws SQLException {
         List<CurrencyDTO> currencies = new ArrayList<>();
         String query =  "SELECT * " +
                         "FROM currencies";
@@ -46,7 +46,7 @@ public class CurrencyDAO {
         return currencies;
     }
 
-    public long insert(String fullName, String code, String sign) throws SQLException {
+    public long insertCurrency(String fullName, String code, String sign) throws SQLException {
         String query =  "INSERT INTO currencies (full_name, code, sign) " +
                         "VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
@@ -61,7 +61,7 @@ public class CurrencyDAO {
         }
     }
 
-    public boolean isExists(String code) throws SQLException {
+    public boolean isCurrencyExists(String code) throws SQLException {
         String query =  "SELECT COUNT(*) " +
                         "FROM currencies " +
                         "WHERE code = ?";

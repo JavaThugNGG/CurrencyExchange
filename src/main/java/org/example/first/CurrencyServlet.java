@@ -1,13 +1,11 @@
 package org.example.first;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -19,7 +17,7 @@ public class CurrencyServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestPath = request.getPathInfo();
 
-        if (!currencyService.isPathValidated(requestPath)) {
+        if (!currencyService.validatePath(requestPath)) {
             Map<String, String> errorResponse = Map.of("message", "Некорректный URL запроса");
             utils.sendResponse(response, 400, errorResponse);
             return;
@@ -28,7 +26,7 @@ public class CurrencyServlet extends HttpServlet {
         String currencyCode = currencyService.getCurrencyCodeWithoutSlash(requestPath);
 
         try {
-            CurrencyDTO currency = currencyService.getCurrencyByCode(currencyCode);
+            CurrencyDTO currency = currencyService.getCurrency(currencyCode);
             utils.sendResponse(response, 200, currency);
         }
         catch (SQLException e) {

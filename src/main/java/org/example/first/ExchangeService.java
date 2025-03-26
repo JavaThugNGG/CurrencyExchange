@@ -10,13 +10,13 @@ public class ExchangeService {
 
 
     public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
-        if(exchangeRateDAO.isExists(baseCurrencyCode, targetCurrencyCode)) {
+        if(exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             return exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
         }
-        if(exchangeRateDAO.isExists(targetCurrencyCode, baseCurrencyCode)) {
-            return exchangeDAO.getRateFromReverseRate(targetCurrencyCode, baseCurrencyCode, amount);
+        if(exchangeRateDAO.isRateExists(targetCurrencyCode, baseCurrencyCode)) {
+            return exchangeDAO.getRateFromReversedRate(targetCurrencyCode, baseCurrencyCode, amount);
         }
-        if(exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
+        if(exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
             return exchangeDAO.getRateWithIntermediate(baseCurrencyCode, targetCurrencyCode, INTERMEDIATE_CURRENCY_CODE, amount);
         }
         throw new ElementNotFoundException();

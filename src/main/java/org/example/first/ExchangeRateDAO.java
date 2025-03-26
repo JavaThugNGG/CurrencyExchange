@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ExchangeRateDAO {
 
-    public List<ExchangeRateDTO> getAll() throws SQLException {
+    public List<ExchangeRateDTO> getAllRates() throws SQLException {
         List<ExchangeRateDTO> exchangeRates = new ArrayList<>();
         String query = "SELECT er.id AS exchangeRateId, " +
                 "er.rate AS exchangeRate, " +
@@ -105,7 +105,7 @@ public class ExchangeRateDAO {
         }
     }
 
-    public void insert(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+    public void insertRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
         String query =  "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) " +
                         "VALUES (" +
                             "(SELECT id FROM currencies WHERE code = ?), " +
@@ -122,7 +122,7 @@ public class ExchangeRateDAO {
         }
     }
 
-    public boolean isExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         String query =  "SELECT id " +
                         "FROM exchange_rates " +
                         "WHERE base_currency_id = (SELECT id " +

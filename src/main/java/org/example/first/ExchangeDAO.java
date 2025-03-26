@@ -52,7 +52,7 @@ public class ExchangeDAO {
         }
     }
 
-    public ExchangeDTO getRateFromReverseRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
+    public ExchangeDTO getRateFromReversedRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +

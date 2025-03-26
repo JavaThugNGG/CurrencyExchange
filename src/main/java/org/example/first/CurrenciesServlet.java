@@ -1,6 +1,5 @@
 package org.example.first;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +38,7 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         try {
-            CurrencyDTO currency = currencyService.putCurrency(name, code, sign);
+            CurrencyDTO currency = currencyService.addCurrency(name, code, sign);
             utils.sendResponse(response, 201, currency);
         } catch (ElementAlreadyExistsException e) {
             Map<String, String> errorResponse = Map.of("message", "Данная валюта уже существует");

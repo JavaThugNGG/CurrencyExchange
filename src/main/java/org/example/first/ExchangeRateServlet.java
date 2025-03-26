@@ -1,6 +1,5 @@
 package org.example.first;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
@@ -31,7 +29,7 @@ public class ExchangeRateServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestPath = request.getPathInfo();
 
-        if (!exchangeRateService.isPathValidatedForGet(requestPath)) {
+        if (!exchangeRateService.validatePathForGet(requestPath)) {
             Map<String, String> errorResponse = Map.of("message", "Указан некорректный URL запроса");
             utils.sendResponse(response, 400, errorResponse);
             return;
@@ -42,7 +40,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
         try {
-            ExchangeRateDTO exchangeRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+            ExchangeRateDTO exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
             utils.sendResponse(response, 200, exchangeRate);
 
         } catch (ElementNotFoundException e) {
@@ -62,7 +60,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
-        if (!exchangeRateService.isPathValidatedForPatch(requestPath)) {
+        if (!exchangeRateService.validatePathForPatch(requestPath)) {
             Map<String, String> errorResponse = Map.of("message", "Отсутствует нужное поле формы");
             utils.sendResponse(response, 400, errorResponse);
             return;
@@ -98,8 +96,8 @@ public class ExchangeRateServlet extends HttpServlet {
         BigDecimal rate = new BigDecimal(rateString);
 
         try {
-            exchangeRateService.updateExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
-            ExchangeRateDTO updatedRate = exchangeRateService.getExchangeRate(baseCurrencyCode, targetCurrencyCode);
+            exchangeRateService.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
+            ExchangeRateDTO updatedRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
             utils.sendResponse(response, 200, updatedRate);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");

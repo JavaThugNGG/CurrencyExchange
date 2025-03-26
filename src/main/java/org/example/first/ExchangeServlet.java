@@ -1,13 +1,11 @@
 package org.example.first;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Map;
