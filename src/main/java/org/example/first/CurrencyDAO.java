@@ -14,12 +14,7 @@ public class CurrencyDAO {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new CurrencyDTO(
-                            rs.getLong("id"),
-                            rs.getString("full_name"),
-                            rs.getString("code"),
-                            rs.getString("sign")
-                    );
+                    return CurrencyDTO.parseParametersToDTO(rs);
                 } else {
                     throw new ElementNotFoundException();
                 }
@@ -35,12 +30,7 @@ public class CurrencyDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                currencies.add(new CurrencyDTO(
-                        rs.getLong("id"),
-                        rs.getString("full_name"),
-                        rs.getString("code"),
-                        rs.getString("sign")
-                ));
+                currencies.add(CurrencyDTO.parseParametersToDTO(rs));
             }
         }
         return currencies;

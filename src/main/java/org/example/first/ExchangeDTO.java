@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @JsonPropertyOrder({"baseCurrency", "targetCurrency", "rate", "amount", "convertedAmount"})
 @Data
@@ -15,4 +17,10 @@ public class ExchangeDTO {
     private BigDecimal rate;
     private BigDecimal amount;
     private BigDecimal convertedAmount;
+
+    static ExchangeDTO parseToExchangeDTO(RawExchangeDTO rawExchangeDTO,  BigDecimal rate, BigDecimal amount, BigDecimal roundedConvertedAmount) throws SQLException {
+        CurrencyDTO baseCurrency = rawExchangeDTO.getBaseCurrency();
+        CurrencyDTO targetCurrency = rawExchangeDTO.getTargetCurrency();
+        return new ExchangeDTO(baseCurrency, targetCurrency, rate, amount, roundedConvertedAmount);
+    }
 }
