@@ -59,6 +59,6 @@ public class ExchangeRateService {
     }
 
     public boolean validateRate(String rate) {
-        return rate != null && rate.matches("\\d+(\\.\\d{1,8})?");
+        return rate != null && rate.matches("[1-9]\\d*(\\.\\d{1,8})?");
     }
 }
