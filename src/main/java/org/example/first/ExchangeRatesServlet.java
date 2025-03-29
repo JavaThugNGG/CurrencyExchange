@@ -43,7 +43,7 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
-        BigDecimal rate = new BigDecimal(rateString);
+        BigDecimal rate = exchangeRateService.normalizeRate(rateString);
 
         try {
             exchangeRateService.addExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);

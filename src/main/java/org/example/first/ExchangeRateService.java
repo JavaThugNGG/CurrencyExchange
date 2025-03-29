@@ -59,6 +59,15 @@ public class ExchangeRateService {
     }
 
     public boolean validateRate(String rate) {
-        return rate != null && rate.matches("[1-9]\\d*(\\.\\d{1,8})?");
+        if (rate == null) {
+            return false;
+        }
+        String normalizedRate = rate.replace(",", ".");
+        return normalizedRate.matches("[1-9]\\d*(\\.\\d{1,8})?");
+    }
+
+    public BigDecimal normalizeRate(String rate) {
+        String rateWithoutComma = rate.replace(",", ".");
+        return new BigDecimal(rateWithoutComma);
     }
 }
