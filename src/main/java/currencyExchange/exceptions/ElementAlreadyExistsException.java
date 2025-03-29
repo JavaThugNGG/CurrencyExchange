@@ -1,4 +1,4 @@
-package org.example.first.exceptions;
+package currencyExchange.exceptions;
 
 public class ElementAlreadyExistsException extends RuntimeException {
     public ElementAlreadyExistsException() {

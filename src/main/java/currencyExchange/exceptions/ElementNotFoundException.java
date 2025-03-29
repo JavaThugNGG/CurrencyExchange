@@ -1,4 +1,4 @@
-package org.example.first.exceptions;
+package currencyExchange.exceptions;
 
 public class ElementNotFoundException extends RuntimeException {
     public ElementNotFoundException() {

@@ -1,4 +1,4 @@
-package org.example.first.db;
+package currencyExchange.db;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

@@ -1,13 +1,13 @@
-package org.example.first.servlets;
+package currencyExchange.servlets;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.first.DTO.ExchangeDTO;
-import org.example.first.exceptions.ElementNotFoundException;
-import org.example.first.utils.Utils;
-import org.example.first.services.ExchangeService;
+import currencyExchange.DTO.ExchangeDTO;
+import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.utils.Utils;
+import currencyExchange.services.ExchangeService;
 
 import java.io.IOException;
 import java.math.BigDecimal;

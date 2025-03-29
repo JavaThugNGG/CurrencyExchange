@@ -1,13 +1,13 @@
-package org.example.first.servlets;
+package currencyExchange.servlets;
 
+import currencyExchange.DTO.CurrencyDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.first.DTO.CurrencyDTO;
-import org.example.first.exceptions.ElementAlreadyExistsException;
-import org.example.first.utils.Utils;
-import org.example.first.services.CurrencyService;
+import currencyExchange.exceptions.ElementAlreadyExistsException;
+import currencyExchange.utils.Utils;
+import currencyExchange.services.CurrencyService;
 
 import java.io.IOException;
 import java.sql.SQLException;

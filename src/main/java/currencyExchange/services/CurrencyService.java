@@ -1,8 +1,8 @@
-package org.example.first.services;
+package currencyExchange.services;
 
-import org.example.first.DAO.CurrencyDAO;
-import org.example.first.DTO.CurrencyDTO;
-import org.example.first.exceptions.ElementAlreadyExistsException;
+import currencyExchange.DAO.CurrencyDAO;
+import currencyExchange.DTO.CurrencyDTO;
+import currencyExchange.exceptions.ElementAlreadyExistsException;
 
 import java.sql.SQLException;
 import java.util.List;

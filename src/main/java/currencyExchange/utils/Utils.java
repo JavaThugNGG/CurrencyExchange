@@ -1,4 +1,4 @@
-package org.example.first.utils;
+package currencyExchange.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

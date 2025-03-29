@@ -1,8 +1,8 @@
-package org.example.first.DAO;
+package currencyExchange.DAO;
 
-import org.example.first.DTO.ExchangeRateDTO;
-import org.example.first.db.DatabaseConnectionProvider;
-import org.example.first.exceptions.ElementNotFoundException;
+import currencyExchange.DTO.ExchangeRateDTO;
+import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.db.DatabaseConnectionProvider;
 
 import java.math.BigDecimal;
 import java.sql.*;

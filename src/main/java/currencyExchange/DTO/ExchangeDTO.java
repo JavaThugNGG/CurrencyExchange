@@ -1,4 +1,4 @@
-package org.example.first.DTO;
+package currencyExchange.DTO;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;

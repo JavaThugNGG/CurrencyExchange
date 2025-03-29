@@ -1,12 +1,12 @@
-package org.example.first.services;
+package currencyExchange.services;
 
-import org.example.first.DAO.CurrencyDAO;
-import org.example.first.DAO.ExchangeDAO;
-import org.example.first.DAO.ExchangeRateDAO;
-import org.example.first.DTO.CurrencyDTO;
-import org.example.first.DTO.ExchangeDTO;
-import org.example.first.DTO.RawExchangeDTO;
-import org.example.first.exceptions.ElementNotFoundException;
+import currencyExchange.DAO.CurrencyDAO;
+import currencyExchange.DAO.ExchangeRateDAO;
+import currencyExchange.DTO.CurrencyDTO;
+import currencyExchange.DTO.RawExchangeDTO;
+import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.DAO.ExchangeDAO;
+import currencyExchange.DTO.ExchangeDTO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

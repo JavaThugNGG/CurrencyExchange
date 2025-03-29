@@ -1,7 +1,7 @@
-package org.example.first.DAO;
+package currencyExchange.DAO;
 
-import org.example.first.DTO.RawExchangeDTO;
-import org.example.first.db.DatabaseConnectionProvider;
+import currencyExchange.DTO.RawExchangeDTO;
+import currencyExchange.db.DatabaseConnectionProvider;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
