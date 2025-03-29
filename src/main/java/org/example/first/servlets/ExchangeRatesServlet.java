@@ -1,9 +1,14 @@
-package org.example.first;
+package org.example.first.servlets;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.first.DTO.ExchangeRateDTO;
+import org.example.first.exceptions.ElementAlreadyExistsException;
+import org.example.first.exceptions.ElementNotFoundException;
+import org.example.first.utils.Utils;
+import org.example.first.services.ExchangeRateService;
 
 import java.io.IOException;
 import java.math.BigDecimal;

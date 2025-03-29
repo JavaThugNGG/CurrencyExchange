@@ -1,4 +1,7 @@
-package org.example.first;
+package org.example.first.DAO;
+
+import org.example.first.DTO.RawExchangeDTO;
+import org.example.first.db.DatabaseConnectionProvider;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

@@ -1,4 +1,4 @@
-package org.example.first;
+package org.example.first.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

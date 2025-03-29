@@ -1,4 +1,4 @@
-package org.example.first;
+package org.example.first.DTO;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ public class CurrencyDTO {
     private String code;
     private String sign;
 
-    static CurrencyDTO parseToCurrencyDTO(ResultSet rs) throws SQLException {
+    public static CurrencyDTO parseToCurrencyDTO(ResultSet rs) throws SQLException {
         return new CurrencyDTO(
                 rs.getLong("id"),
                 rs.getString("full_name"),

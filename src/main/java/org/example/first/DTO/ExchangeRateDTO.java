@@ -1,4 +1,4 @@
-package org.example.first;
+package org.example.first.DTO;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class ExchangeRateDTO {
     private CurrencyDTO targetCurrency;
     private BigDecimal rate;
 
-    static ExchangeRateDTO parseToExchangeRateDTO(ResultSet rs) throws SQLException {
+    public static ExchangeRateDTO parseToExchangeRateDTO(ResultSet rs) throws SQLException {
         long id = rs.getLong("rateId");
 
         CurrencyDTO baseCurrency = new CurrencyDTO(

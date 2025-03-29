@@ -1,4 +1,8 @@
-package org.example.first;
+package org.example.first.DAO;
+
+import org.example.first.DTO.CurrencyDTO;
+import org.example.first.db.DatabaseConnectionProvider;
+import org.example.first.exceptions.ElementNotFoundException;
 
 import java.sql.*;
 import java.util.ArrayList;

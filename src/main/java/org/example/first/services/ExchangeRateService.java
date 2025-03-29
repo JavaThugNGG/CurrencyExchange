@@ -1,6 +1,11 @@
-package org.example.first;
+package org.example.first.services;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.example.first.DAO.CurrencyDAO;
+import org.example.first.DAO.ExchangeRateDAO;
+import org.example.first.DTO.ExchangeRateDTO;
+import org.example.first.exceptions.ElementAlreadyExistsException;
+import org.example.first.exceptions.ElementNotFoundException;
 
 import java.io.BufferedReader;
 import java.io.IOException;

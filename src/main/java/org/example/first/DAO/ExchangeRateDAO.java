@@ -1,4 +1,8 @@
-package org.example.first;
+package org.example.first.DAO;
+
+import org.example.first.DTO.ExchangeRateDTO;
+import org.example.first.db.DatabaseConnectionProvider;
+import org.example.first.exceptions.ElementNotFoundException;
 
 import java.math.BigDecimal;
 import java.sql.*;
