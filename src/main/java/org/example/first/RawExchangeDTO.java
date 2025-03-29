@@ -17,7 +17,7 @@ public class RawExchangeDTO {
     private BigDecimal rate;
     private BigDecimal amount;
 
-    static RawExchangeDTO parseToExchangeDAODTO(ResultSet rs, BigDecimal amount) throws SQLException {
+    static RawExchangeDTO parseToRawExchangeDTO(ResultSet rs, BigDecimal amount) throws SQLException {
         CurrencyDTO baseCurrency = new CurrencyDTO(rs.getLong("baseId"),
                 rs.getString("baseName"),
                 rs.getString("baseCode"),

@@ -7,43 +7,31 @@ import java.sql.SQLException;
 public class ExchangeService {
     private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
     private final ExchangeDAO exchangeDAO = new ExchangeDAO();
+    private final CurrencyDAO currencyDAO = new CurrencyDAO();
     private final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
 
     public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         if(exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
-            BigDecimal rate = rawExchangeDTO.getRate();
-            BigDecimal convertedAmount = rate.multiply(amount);
-            BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-
-            return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+            return convertAmountFromStraightRate(rawExchangeDTO, amount);
         }
-        if(exchangeRateDAO.isRateExists(targetCurrencyCode, baseCurrencyCode)) {                                  //тут подумать читаемо ли это (этот свап)
+
+        if(exchangeRateDAO.isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(targetCurrencyCode, baseCurrencyCode, amount);
-            BigDecimal rate = rawExchangeDTO.getRate();
-            BigDecimal reversedRate = BigDecimal.ONE.divide(rate, 8, RoundingMode.HALF_UP);
-            BigDecimal convertedAmount = reversedRate.multiply(amount);
-            BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-
-            return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+            return convertAmountFromReversedRate(rawExchangeDTO, amount);
         }
+
         if(exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
-            BigDecimal rate1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode);
-            BigDecimal rate2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode);
+            RawExchangeDTO rawExchangeDTO1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
+            RawExchangeDTO rawExchangeDTO2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
+            BigDecimal rate1 = rawExchangeDTO1.getRate();
+            BigDecimal rate2 = rawExchangeDTO2.getRate();
 
-            CurrencyDTO baseCurrency = exchangeDAO.getCurrencyDetails(baseCurrencyCode);
-            CurrencyDTO targetCurrency = exchangeDAO.getCurrencyDetails(targetCurrencyCode);
+            CurrencyDTO baseCurrency = currencyDAO.getCurrency(baseCurrencyCode);
+            CurrencyDTO targetCurrency = currencyDAO.getCurrency(targetCurrencyCode);
 
-            BigDecimal tempRate1 = BigDecimal.ONE.divide(rate1, 8, RoundingMode.HALF_UP);
-            BigDecimal tempRate2 = BigDecimal.ONE.divide(rate2, 8, RoundingMode.HALF_UP);
-
-
-            BigDecimal rate = tempRate1.divide(tempRate2, 8, RoundingMode.HALF_UP);
-            BigDecimal convertedAmount = rate.multiply(amount);
-            BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-
-            return new ExchangeDTO(baseCurrency, targetCurrency, rate, amount, roundedConvertedAmount);
+            return convertRateFromCrossRate(baseCurrency, targetCurrency, rate1, rate2, amount);
         }
         throw new ElementNotFoundException();
     }
@@ -52,7 +40,33 @@ public class ExchangeService {
         return amount != null & amount.matches("\\d{1,14}(\\.\\d{1,14})?");
     }
 
-    public boolean isDifferentCurrencies(String from, String to) {
+    public boolean isSameCurrencies(String from, String to) {
         return from.equals(to);
+    }
+
+    private ExchangeDTO convertAmountFromStraightRate(RawExchangeDTO rawExchangeDTO, BigDecimal amount) throws SQLException {
+        BigDecimal rate = rawExchangeDTO.getRate();
+        BigDecimal convertedAmount = rate.multiply(amount);
+        BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
+        return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+    }
+
+    private ExchangeDTO convertAmountFromReversedRate(RawExchangeDTO rawExchangeDTO, BigDecimal amount) throws SQLException {
+        BigDecimal rate = rawExchangeDTO.getRate();
+        BigDecimal reversedRate = BigDecimal.ONE.divide(rate, 8, RoundingMode.HALF_UP);
+        BigDecimal convertedAmount = reversedRate.multiply(amount);
+        BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
+        return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+    }
+
+    private ExchangeDTO convertRateFromCrossRate(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate1, BigDecimal rate2, BigDecimal amount) {
+        BigDecimal inverseRate1 = BigDecimal.ONE.divide(rate1, 8, RoundingMode.HALF_UP);
+        BigDecimal inverseRate2 = BigDecimal.ONE.divide(rate2, 8, RoundingMode.HALF_UP);
+        BigDecimal rate = inverseRate1.divide(inverseRate2, 8, RoundingMode.HALF_UP);
+
+        BigDecimal convertedAmount = rate.multiply(amount);
+        BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
+
+        return new ExchangeDTO(baseCurrency, targetCurrency, rate, amount, roundedConvertedAmount);
     }
 }

@@ -4,7 +4,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -19,7 +18,7 @@ public class ExchangeServlet extends HttpServlet {
         String from = request.getParameter("from");
         String to = request.getParameter("to");
 
-        if (exchangeService.isDifferentCurrencies(from, to)) {
+        if (exchangeService.isSameCurrencies(from, to)) {
             Map<String, String> errorResponse = Map.of("message", "Валютная пара должна состоять из разных валют");
             utils.sendResponse(response, 400, errorResponse);
             return;

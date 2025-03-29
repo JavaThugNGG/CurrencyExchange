@@ -5,8 +5,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -30,7 +28,7 @@ public class ExchangeRateServlet extends HttpServlet {
         String requestPath = request.getPathInfo();
 
         if (!exchangeRateService.validatePathForGet(requestPath)) {
-            Map<String, String> errorResponse = Map.of("message", "Указан некорректный URL запроса");
+            Map<String, String> errorResponse = Map.of("message", "Некорректный URL запроса");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
@@ -61,13 +59,12 @@ public class ExchangeRateServlet extends HttpServlet {
         String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
 
         if (!exchangeRateService.validatePathForPatch(requestPath)) {
-            Map<String, String> errorResponse = Map.of("message", "Отсутствует нужное поле формы");
+            Map<String, String> errorResponse = Map.of("message", "Отсутствует нужное поле формы или некорректные параметры");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-
-        String rateString = exchangeRateService.readRate(request);
+        String rateString = exchangeRateService.parseRateForPatch(request);
 
         if (!exchangeRateService.validateRate(rateString)) {
             Map<String, String> errorResponse = Map.of("message", "параметр rate некорректный");
@@ -89,5 +86,4 @@ public class ExchangeRateServlet extends HttpServlet {
             utils.sendResponse(response, 404, errorResponse);
         }
     }
-
 }

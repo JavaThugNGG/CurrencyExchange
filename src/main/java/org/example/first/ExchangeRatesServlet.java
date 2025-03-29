@@ -46,7 +46,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         BigDecimal rate = exchangeRateService.normalizeRate(rateString);
 
         try {
-            exchangeRateService.addExchangeRate(baseCurrencyCode, targetCurrencyCode, rate);
+            exchangeRateService.addRate(baseCurrencyCode, targetCurrencyCode, rate);
             ExchangeRateDTO exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
             utils.sendResponse(response, 201, exchangeRate);
         } catch (SQLException e) {

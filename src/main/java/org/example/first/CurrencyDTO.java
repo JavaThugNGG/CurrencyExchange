@@ -16,7 +16,7 @@ public class CurrencyDTO {
     private String code;
     private String sign;
 
-    static CurrencyDTO parseParametersToDTO(ResultSet rs) throws SQLException {
+    static CurrencyDTO parseToCurrencyDTO(ResultSet rs) throws SQLException {
         return new CurrencyDTO(
                 rs.getLong("id"),
                 rs.getString("full_name"),

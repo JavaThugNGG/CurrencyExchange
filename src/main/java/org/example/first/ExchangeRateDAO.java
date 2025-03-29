@@ -6,18 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeRateDAO {
-
     public List<ExchangeRateDTO> getAllRates() throws SQLException {
         List<ExchangeRateDTO> exchangeRates = new ArrayList<>();
-        String query = "SELECT er.id AS exchangeRateId, " +
-                "er.rate AS exchangeRate, " +
+        String query = "SELECT er.id AS rateId, " +
+                "er.rate AS rate, " +
                 "c1.id AS baseId, " +
                 "c1.code AS baseCode, " +
-                "c1.full_name AS baseFullName, " +
+                "c1.full_name AS baseName, " +
                 "c1.sign AS baseSign, " +
                 "c2.id AS targetId, " +
                 "c2.code AS targetCode, " +
-                "c2.full_name AS targetFullName, " +
+                "c2.full_name AS targetName, " +
                 "c2.sign AS targetSign " +
                 "FROM exchange_rates er " +
                 "JOIN currencies c1 ON er.base_currency_id = c1.id " +
@@ -27,34 +26,21 @@ public class ExchangeRateDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                exchangeRates.add(new ExchangeRateDTO(
-                        rs.getLong("exchangeRateId"),
-                        new CurrencyDTO(
-                                rs.getLong("baseId"),
-                                rs.getString("baseFullName"),
-                                rs.getString("baseCode"),
-                                rs.getString("baseSign")),
-                        new CurrencyDTO(
-                                rs.getLong("targetId"),
-                                rs.getString("targetFullName"),
-                                rs.getString("targetCode"),
-                                rs.getString("targetSign")),
-                        rs.getBigDecimal("exchangeRate")
-                ));
+                exchangeRates.add(ExchangeRateDTO.parseToExchangeRateDTO(rs));
             }
         }
         return exchangeRates;
     }
 
     public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
-        String query = "SELECT er.id AS exchangeRateId, " + //
-                "er.rate AS exchangeRate, " +
+        String query = "SELECT er.id AS rateId, " + //
+                "er.rate AS rate, " +
                 "c1.id AS baseId, " +
-                "c1.full_name AS baseFullName, " +
+                "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
                 "c1.sign AS baseSign, " +
                 "c2.id AS targetId, " +
-                "c2.full_name AS targetFullName, " +
+                "c2.full_name AS targetName, " +
                 "c2.code AS targetCode, " +
                 "c2.sign AS targetSign " +
                 "FROM exchange_rates er " +
@@ -66,23 +52,9 @@ public class ExchangeRateDAO {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new ExchangeRateDTO(
-                            rs.getLong("exchangeRateId"),
-                            new CurrencyDTO(
-                                    rs.getLong("baseId"),
-                                    rs.getString("baseCode"),
-                                    rs.getString("baseFullName"),
-                                    rs.getString("baseSign")),
-                            new CurrencyDTO(
-                                    rs.getLong("targetId"),
-                                    rs.getString("targetCode"),
-                                    rs.getString("targetFullName"),
-                                    rs.getString("targetSign")),
-                            rs.getBigDecimal("exchangeRate")
-                    );
+                    return ExchangeRateDTO.parseToExchangeRateDTO(rs);
                 } else {
                     throw new ElementNotFoundException();
                 }
@@ -143,6 +115,10 @@ public class ExchangeRateDAO {
                 }
             }
         }
+    }
+
+    public boolean isReversedRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        return isRateExists(targetCurrencyCode, baseCurrencyCode);
     }
 }
 

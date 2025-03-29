@@ -14,7 +14,7 @@ public class CurrencyDAO {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return CurrencyDTO.parseParametersToDTO(rs);
+                    return CurrencyDTO.parseToCurrencyDTO(rs);
                 } else {
                     throw new ElementNotFoundException();
                 }
@@ -30,7 +30,7 @@ public class CurrencyDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                currencies.add(CurrencyDTO.parseParametersToDTO(rs));
+                currencies.add(CurrencyDTO.parseToCurrencyDTO(rs));
             }
         }
         return currencies;

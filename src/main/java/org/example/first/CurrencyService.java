@@ -1,6 +1,5 @@
 package org.example.first;
 
-
 import java.sql.SQLException;
 import java.util.List;
 

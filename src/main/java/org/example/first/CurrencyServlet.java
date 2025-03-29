@@ -38,5 +38,4 @@ public class CurrencyServlet extends HttpServlet {
             utils.sendResponse(response, 404, errorResponse);
         }
     }
-
 }
