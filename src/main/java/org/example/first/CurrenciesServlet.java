@@ -31,11 +31,25 @@ public class CurrenciesServlet extends HttpServlet {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (!currencyService.validateParameters(code, name, sign)) {
-            Map<String, String> errorResponse = Map.of("message", "Некорректные аргументы для добавления валюты");
+        if (!currencyService.validateCode(code)) {
+            Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент code для добавления валюты");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
+
+        if (!currencyService.validateName(name)) {
+            Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент name для добавления валюты");
+            utils.sendResponse(response, 400, errorResponse);
+            return;
+        }
+
+        if (!currencyService.validateSign(sign)) {
+            Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент sign для добавления валюты");
+            utils.sendResponse(response, 400, errorResponse);
+            return;
+        }
+
+
 
         try {
             CurrencyDTO currency = currencyService.addCurrency(name, code, sign);

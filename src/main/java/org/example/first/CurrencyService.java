@@ -27,8 +27,16 @@ public class CurrencyService {
         return path != null && path.matches("^/[A-Z]{3}$");
     }
 
-    public boolean validateParameters(String code, String name, String sign) {
-        return code != null && name!= null & sign != null & code.matches("([A-Za-z]{1,3})") && name.matches("([A-Za-zА]{1,8})( [A-Za-zА]{1,10}){0,2}") && sign.matches("\\S");
+    public boolean validateCode(String code) {
+        return code != null & code.matches("([A-Za-z]{1,3})");
+    }
+
+    public boolean validateName(String name) {
+        return name != null & name.matches("([A-Za-zА]{1,8})( [A-Za-zА]{1,10}){0,2}");
+    }
+
+    public boolean validateSign(String sign) {
+        return sign != null && sign.matches("\\S");
     }
 
     public String getCurrencyCodeWithoutSlash(String currencyCode) {
