@@ -1,5 +1,9 @@
 package org.example.first;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -55,7 +59,7 @@ public class ExchangeRateService {
     }
 
     public boolean validateParameters(String baseCode, String targetCode, String rate) {
-        return baseCode != null & targetCode != null & rate != null & baseCode.matches("([A-Za-z]{1,3})") && targetCode.matches("([A-Za-z]{1,3})") && validateRate(rate);
+        return baseCode != null & targetCode != null && baseCode.matches("([A-Za-z]{1,3})") && targetCode.matches("([A-Za-z]{1,3})") && validateRate(rate);
     }
 
     public boolean validateRate(String rate) {
@@ -63,11 +67,31 @@ public class ExchangeRateService {
             return false;
         }
         String normalizedRate = rate.replace(",", ".");
-        return normalizedRate.matches("[1-9]\\d*(\\.\\d{1,8})?");
+        return normalizedRate.matches("([1-9]\\d*|0)\\.0*[1-9]\\d{0,7}");
     }
 
     public BigDecimal normalizeRate(String rate) {
         String rateWithoutComma = rate.replace(",", ".");
         return new BigDecimal(rateWithoutComma);
+    }
+
+    public String readRate(HttpServletRequest request) throws IOException {
+        StringBuilder requestBody = new StringBuilder();
+        String line;
+        BufferedReader reader = request.getReader();
+        while ((line = reader.readLine()) != null) {
+            requestBody.append(line);
+        }
+
+        String requestData = requestBody.toString();
+
+        String rateString = null;
+        for (String param : requestData.split("&")) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2 && "rate".equals(keyValue[0])) {
+                rateString = keyValue[1];
+            }
+        }
+        return rateString;
     }
 }

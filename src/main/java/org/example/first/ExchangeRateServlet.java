@@ -67,25 +67,7 @@ public class ExchangeRateServlet extends HttpServlet {
         }
 
 
-        //вот это вынесу в отдельный метод!!!!
-        // Чтение тела запроса для извлечения параметров
-        StringBuilder requestBody = new StringBuilder();
-        String line;
-        BufferedReader reader = request.getReader();
-        while ((line = reader.readLine()) != null) {
-            requestBody.append(line);
-        }
-
-        String requestData = requestBody.toString();
-
-        // Преобразуем строку запроса в параметры (если они в формате URL-encoded)
-        String rateString = null;
-        for (String param : requestData.split("&")) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length == 2 && "rate".equals(keyValue[0])) {
-                rateString = keyValue[1];
-            }
-        }
+        String rateString = exchangeRateService.readRate(request);
 
         if (!exchangeRateService.validateRate(rateString)) {
             Map<String, String> errorResponse = Map.of("message", "параметр rate некорректный");
