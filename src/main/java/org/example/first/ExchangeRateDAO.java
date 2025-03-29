@@ -120,6 +120,8 @@ public class ExchangeRateDAO {
     public boolean isReversedRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         return isRateExists(targetCurrencyCode, baseCurrencyCode);
     }
+
+
 }
 
 

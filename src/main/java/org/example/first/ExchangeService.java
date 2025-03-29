@@ -12,17 +12,17 @@ public class ExchangeService {
 
 
     public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
-        if(exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode)) {
+        if(isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
             return convertAmountFromStraightRate(rawExchangeDTO, amount);
         }
 
-        if(exchangeRateDAO.isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
+        if(isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(targetCurrencyCode, baseCurrencyCode, amount);
             return convertAmountFromReversedRate(rawExchangeDTO, amount);
         }
 
-        if(exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode)) {
+        if(isCrossRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDTO rawExchangeDTO1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
             RawExchangeDTO rawExchangeDTO2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
             BigDecimal rate1 = rawExchangeDTO1.getRate();
@@ -42,6 +42,18 @@ public class ExchangeService {
 
     public boolean isSameCurrencies(String from, String to) {
         return from.equals(to);
+    }
+
+    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        return exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode);
+    }
+
+    public boolean isReversedRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        return exchangeRateDAO.isRateExists(targetCurrencyCode, baseCurrencyCode);
+    }
+
+    public boolean isCrossRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+        return exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode);
     }
 
     private ExchangeDTO convertAmountFromStraightRate(RawExchangeDTO rawExchangeDTO, BigDecimal amount) throws SQLException {

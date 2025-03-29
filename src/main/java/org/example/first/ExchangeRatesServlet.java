@@ -32,7 +32,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         String rateString = request.getParameter("rate");
 
         if (!exchangeRateService.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
-            Map<String, String> errorResponse = Map.of("message", "Отсутствует обязательное поле запроса или неверный курс обмена");    //400
+            Map<String, String> errorResponse = Map.of("message", "Отсутствуют необходимые параметры запроса или они некорректные");    //400
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
