@@ -29,8 +29,8 @@ public class ExchangeRateDao {
                 """;
 
         try (Connection conn = DatabaseConnectionProvider.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 exchangeRates.add(ExchangeRateDto.parseToExchangeRateDTO(rs));
             }
@@ -60,13 +60,13 @@ public class ExchangeRateDao {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return ExchangeRateDto.parseToExchangeRateDTO(rs);
-                } else {
-                    throw new ElementNotFoundException();
-                }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return ExchangeRateDto.parseToExchangeRateDTO(rs);
+            } else {
+                throw new ElementNotFoundException();
             }
+
         }
     }
 
@@ -121,12 +121,11 @@ public class ExchangeRateDao {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0;
-                } else {
-                    return false;
-                }
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            } else {
+                return false;
             }
         }
     }

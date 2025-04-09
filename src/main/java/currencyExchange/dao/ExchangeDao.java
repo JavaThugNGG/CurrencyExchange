@@ -31,12 +31,11 @@ public class ExchangeDao {
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, baseCurrencyCode);
             stmt.setString(2, targetCurrencyCode);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
-                    return RawExchangeDto.parseToRawExchangeDTO(resultSet, amount);
-                } else {
-                    throw new SQLException();
-                }
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return RawExchangeDto.parseToRawExchangeDTO(resultSet, amount);
+            } else {
+                throw new SQLException();
             }
         }
     }

@@ -18,12 +18,11 @@ public class CurrencyDao {
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, code);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return CurrencyDto.parseToCurrencyDTO(rs);
-                } else {
-                    throw new ElementNotFoundException();
-                }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return CurrencyDto.parseToCurrencyDTO(rs);
+            } else {
+                throw new ElementNotFoundException();
             }
         }
     }
@@ -35,8 +34,8 @@ public class CurrencyDao {
                         FROM currencies;
                         """;
         try (Connection conn = DatabaseConnectionProvider.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+             Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
                 currencies.add(CurrencyDto.parseToCurrencyDTO(rs));
             }
@@ -55,9 +54,8 @@ public class CurrencyDao {
             stmt.setString(2, code);
             stmt.setString(3, sign);
             stmt.executeUpdate();
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                return generatedKeys.getLong(1);
-            }
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            return generatedKeys.getLong(1);
         }
     }
 
@@ -70,12 +68,11 @@ public class CurrencyDao {
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, code);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt(1) > 0;
-                } else {
-                    return false;
-                }
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            } else {
+                return false;
             }
         }
     }
