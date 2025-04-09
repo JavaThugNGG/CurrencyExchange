@@ -1,6 +1,6 @@
 package currencyExchange.servlets;
 
-import currencyExchange.DTO.CurrencyDTO;
+import currencyExchange.dto.CurrencyDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.utils.Utils;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class CurrencyServlet extends HttpServlet {
         String currencyCode = currencyService.getCurrencyCodeWithoutSlash(requestPath);
 
         try {
-            CurrencyDTO currency = currencyService.getCurrency(currencyCode);
+            CurrencyDto currency = currencyService.getCurrency(currencyCode);
             utils.sendResponse(response, 200, currency);
         }
         catch (SQLException e) {

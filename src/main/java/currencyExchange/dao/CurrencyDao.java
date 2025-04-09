@@ -1,6 +1,6 @@
 package currencyExchange.dao;
 
-import currencyExchange.dto.CurrencyDTO;
+import currencyExchange.dto.CurrencyDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
 
@@ -8,8 +8,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CurrencyDAO {
-    public CurrencyDTO getCurrency(String code) throws SQLException {
+public class CurrencyDao {
+    public CurrencyDto getCurrency(String code) throws SQLException {
         String query =  "SELECT * " +
                         "FROM currencies " +
                         "WHERE code = ?";
@@ -18,7 +18,7 @@ public class CurrencyDAO {
             stmt.setString(1, code);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return CurrencyDTO.parseToCurrencyDTO(rs);
+                    return CurrencyDto.parseToCurrencyDTO(rs);
                 } else {
                     throw new ElementNotFoundException();
                 }
@@ -26,15 +26,15 @@ public class CurrencyDAO {
         }
     }
 
-    public List<CurrencyDTO> getAllCurrencies() throws SQLException {
-        List<CurrencyDTO> currencies = new ArrayList<>();
+    public List<CurrencyDto> getAllCurrencies() throws SQLException {
+        List<CurrencyDto> currencies = new ArrayList<>();
         String query =  "SELECT * " +
                         "FROM currencies";
         try (Connection conn = DatabaseConnectionProvider.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                currencies.add(CurrencyDTO.parseToCurrencyDTO(rs));
+                currencies.add(CurrencyDto.parseToCurrencyDTO(rs));
             }
         }
         return currencies;

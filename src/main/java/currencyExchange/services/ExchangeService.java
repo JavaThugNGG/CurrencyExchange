@@ -1,43 +1,43 @@
 package currencyExchange.services;
 
-import currencyExchange.DAO.CurrencyDAO;
-import currencyExchange.DAO.ExchangeRateDAO;
-import currencyExchange.DTO.CurrencyDTO;
-import currencyExchange.DTO.RawExchangeDTO;
+import currencyExchange.dao.CurrencyDao;
+import currencyExchange.dao.ExchangeRateDao;
+import currencyExchange.dto.CurrencyDto;
+import currencyExchange.dto.RawExchangeDto;
 import currencyExchange.exceptions.ElementNotFoundException;
-import currencyExchange.DAO.ExchangeDAO;
-import currencyExchange.DTO.ExchangeDTO;
+import currencyExchange.dao.ExchangeDao;
+import currencyExchange.dto.ExchangeDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 
 public class ExchangeService {
-    private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
-    private final ExchangeDAO exchangeDAO = new ExchangeDAO();
-    private final CurrencyDAO currencyDAO = new CurrencyDAO();
+    private final ExchangeRateDao exchangeRateDAO = new ExchangeRateDao();
+    private final ExchangeDao exchangeDAO = new ExchangeDao();
+    private final CurrencyDao currencyDAO = new CurrencyDao();
     private final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
 
-    public ExchangeDTO exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
+    public ExchangeDto exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         if(isRateExists(baseCurrencyCode, targetCurrencyCode)) {
-            RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
+            RawExchangeDto rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
             return convertAmountFromStraightRate(rawExchangeDTO, amount);
         }
 
         if(isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
-            RawExchangeDTO rawExchangeDTO = exchangeDAO.getRate(targetCurrencyCode, baseCurrencyCode, amount);
+            RawExchangeDto rawExchangeDTO = exchangeDAO.getRate(targetCurrencyCode, baseCurrencyCode, amount);
             return convertAmountFromReversedRate(rawExchangeDTO, amount);
         }
 
         if(isCrossRateExists(baseCurrencyCode, targetCurrencyCode)) {
-            RawExchangeDTO rawExchangeDTO1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
-            RawExchangeDTO rawExchangeDTO2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
+            RawExchangeDto rawExchangeDTO1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
+            RawExchangeDto rawExchangeDTO2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
             BigDecimal rate1 = rawExchangeDTO1.getRate();
             BigDecimal rate2 = rawExchangeDTO2.getRate();
 
-            CurrencyDTO baseCurrency = currencyDAO.getCurrency(baseCurrencyCode);
-            CurrencyDTO targetCurrency = currencyDAO.getCurrency(targetCurrencyCode);
+            CurrencyDto baseCurrency = currencyDAO.getCurrency(baseCurrencyCode);
+            CurrencyDto targetCurrency = currencyDAO.getCurrency(targetCurrencyCode);
 
             return convertRateFromCrossRate(baseCurrency, targetCurrency, rate1, rate2, amount);
         }
@@ -64,22 +64,22 @@ public class ExchangeService {
         return exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode);
     }
 
-    private ExchangeDTO convertAmountFromStraightRate(RawExchangeDTO rawExchangeDTO, BigDecimal amount) throws SQLException {
+    private ExchangeDto convertAmountFromStraightRate(RawExchangeDto rawExchangeDTO, BigDecimal amount) throws SQLException {
         BigDecimal rate = rawExchangeDTO.getRate();
         BigDecimal convertedAmount = rate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-        return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+        return ExchangeDto.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
     }
 
-    private ExchangeDTO convertAmountFromReversedRate(RawExchangeDTO rawExchangeDTO, BigDecimal amount) throws SQLException {
+    private ExchangeDto convertAmountFromReversedRate(RawExchangeDto rawExchangeDTO, BigDecimal amount) throws SQLException {
         BigDecimal rate = rawExchangeDTO.getRate();
         BigDecimal reversedRate = BigDecimal.ONE.divide(rate, 8, RoundingMode.HALF_UP);
         BigDecimal convertedAmount = reversedRate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-        return ExchangeDTO.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+        return ExchangeDto.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
     }
 
-    private ExchangeDTO convertRateFromCrossRate(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate1, BigDecimal rate2, BigDecimal amount) {
+    private ExchangeDto convertRateFromCrossRate(CurrencyDto baseCurrency, CurrencyDto targetCurrency, BigDecimal rate1, BigDecimal rate2, BigDecimal amount) {
         BigDecimal inverseRate1 = BigDecimal.ONE.divide(rate1, 8, RoundingMode.HALF_UP);
         BigDecimal inverseRate2 = BigDecimal.ONE.divide(rate2, 8, RoundingMode.HALF_UP);
         BigDecimal rate = inverseRate1.divide(inverseRate2, 8, RoundingMode.HALF_UP);
@@ -87,6 +87,6 @@ public class ExchangeService {
         BigDecimal convertedAmount = rate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
 
-        return new ExchangeDTO(baseCurrency, targetCurrency, rate, amount, roundedConvertedAmount);
+        return new ExchangeDto(baseCurrency, targetCurrency, rate, amount, roundedConvertedAmount);
     }
 }

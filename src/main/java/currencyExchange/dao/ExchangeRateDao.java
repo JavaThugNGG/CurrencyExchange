@@ -1,6 +1,6 @@
 package currencyExchange.dao;
 
-import currencyExchange.dto.ExchangeRateDTO;
+import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
 
@@ -9,9 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExchangeRateDAO {
-    public List<ExchangeRateDTO> getAllRates() throws SQLException {
-        List<ExchangeRateDTO> exchangeRates = new ArrayList<>();
+public class ExchangeRateDao {
+    public List<ExchangeRateDto> getAllRates() throws SQLException {
+        List<ExchangeRateDto> exchangeRates = new ArrayList<>();
         String query = "SELECT er.id AS rateId, " +
                 "er.rate AS rate, " +
                 "c1.id AS baseId, " +
@@ -30,13 +30,13 @@ public class ExchangeRateDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                exchangeRates.add(ExchangeRateDTO.parseToExchangeRateDTO(rs));
+                exchangeRates.add(ExchangeRateDto.parseToExchangeRateDTO(rs));
             }
         }
         return exchangeRates;
     }
 
-    public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public ExchangeRateDto getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         String query = "SELECT er.id AS rateId, " + //
                 "er.rate AS rate, " +
                 "c1.id AS baseId, " +
@@ -58,7 +58,7 @@ public class ExchangeRateDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return ExchangeRateDTO.parseToExchangeRateDTO(rs);
+                    return ExchangeRateDto.parseToExchangeRateDTO(rs);
                 } else {
                     throw new ElementNotFoundException();
                 }

@@ -1,6 +1,6 @@
 package currencyExchange.dao;
 
-import currencyExchange.dto.RawExchangeDTO;
+import currencyExchange.dto.RawExchangeDto;
 import currencyExchange.db.DatabaseConnectionProvider;
 
 import java.math.BigDecimal;
@@ -9,8 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ExchangeDAO {
-    public RawExchangeDTO getRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
+public class ExchangeDao {
+    public RawExchangeDto getRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         String query = "SELECT c1.id AS baseId, " +
                 "c1.full_name AS baseName, " +
                 "c1.code AS baseCode, " +
@@ -31,7 +31,7 @@ public class ExchangeDAO {
             stmt.setString(2, targetCurrencyCode);
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    return RawExchangeDTO.parseToRawExchangeDTO(resultSet, amount);
+                    return RawExchangeDto.parseToRawExchangeDTO(resultSet, amount);
                 } else {
                     throw new SQLException();
                 }

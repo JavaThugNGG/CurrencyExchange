@@ -1,10 +1,10 @@
 package currencyExchange.services;
 
-import currencyExchange.DAO.ExchangeRateDAO;
-import currencyExchange.DTO.ExchangeRateDTO;
+import currencyExchange.dao.ExchangeRateDao;
+import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import currencyExchange.DAO.CurrencyDAO;
+import currencyExchange.dao.CurrencyDao;
 import currencyExchange.exceptions.ElementAlreadyExistsException;
 
 import java.io.BufferedReader;
@@ -14,14 +14,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ExchangeRateService {
-    private final ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
-    private final CurrencyDAO currencyDAO = new CurrencyDAO();
+    private final ExchangeRateDao exchangeRateDAO = new ExchangeRateDao();
+    private final CurrencyDao currencyDAO = new CurrencyDao();
 
-    public ExchangeRateDTO getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public ExchangeRateDto getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
         return exchangeRateDAO.getRate(baseCurrencyCode, targetCurrencyCode);
     }
 
-    public List<ExchangeRateDTO> getAllRates() throws SQLException {
+    public List<ExchangeRateDto> getAllRates() throws SQLException {
         return exchangeRateDAO.getAllRates();
     }
 

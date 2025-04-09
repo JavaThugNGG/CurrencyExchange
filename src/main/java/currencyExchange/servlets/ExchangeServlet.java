@@ -4,7 +4,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import currencyExchange.DTO.ExchangeDTO;
+import currencyExchange.dto.ExchangeDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.utils.Utils;
 import currencyExchange.services.ExchangeService;
@@ -38,7 +38,7 @@ public class ExchangeServlet extends HttpServlet {
         BigDecimal amount = new BigDecimal(request.getParameter("amount"));
 
         try {
-            ExchangeDTO exchangeDTO = exchangeService.exchange(from, to, amount);
+            ExchangeDto exchangeDTO = exchangeService.exchange(from, to, amount);
             utils.sendResponse(response, 200, exchangeDTO);
 
         } catch (SQLException | ElementNotFoundException e) {

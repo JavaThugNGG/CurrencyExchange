@@ -1,6 +1,6 @@
 package currencyExchange.servlets;
 
-import currencyExchange.DTO.ExchangeRateDTO;
+import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.utils.Utils;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,7 +23,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllRates();
+            List<ExchangeRateDto> exchangeRates = exchangeRateService.getAllRates();
             utils.sendResponse(response, 200, exchangeRates);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
@@ -52,7 +52,7 @@ public class ExchangeRatesServlet extends HttpServlet {
 
         try {
             exchangeRateService.addRate(baseCurrencyCode, targetCurrencyCode, rate);
-            ExchangeRateDTO exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
+            ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
             utils.sendResponse(response, 201, exchangeRate);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");

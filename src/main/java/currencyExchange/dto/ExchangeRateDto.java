@@ -11,22 +11,22 @@ import java.sql.SQLException;
 @JsonPropertyOrder({"id", "baseCurrency", "targetCurrency", "rate"})
 @Data
 @AllArgsConstructor
-public class ExchangeRateDTO {
+public class ExchangeRateDto {
     private long id;
-    private CurrencyDTO baseCurrency;
-    private CurrencyDTO targetCurrency;
+    private CurrencyDto baseCurrency;
+    private CurrencyDto targetCurrency;
     private BigDecimal rate;
 
-    public static ExchangeRateDTO parseToExchangeRateDTO(ResultSet rs) throws SQLException {
+    public static ExchangeRateDto parseToExchangeRateDTO(ResultSet rs) throws SQLException {
         long id = rs.getLong("rateId");
 
-        CurrencyDTO baseCurrency = new CurrencyDTO(
+        CurrencyDto baseCurrency = new CurrencyDto(
                 rs.getLong("baseId"),
                 rs.getString("baseName"),
                 rs.getString("baseCode"),
                 rs.getString("baseSign"));
 
-        CurrencyDTO targetCurrency = new CurrencyDTO(
+        CurrencyDto targetCurrency = new CurrencyDto(
                 rs.getLong("targetId"),
                 rs.getString("targetName"),
                 rs.getString("targetCode"),
@@ -34,6 +34,6 @@ public class ExchangeRateDTO {
 
         BigDecimal rate = rs.getBigDecimal("rate");
 
-        return new ExchangeRateDTO(id, baseCurrency, targetCurrency, rate);
+        return new ExchangeRateDto(id, baseCurrency, targetCurrency, rate);
     }
 }

@@ -1,6 +1,6 @@
 package currencyExchange.servlets;
 
-import currencyExchange.DTO.CurrencyDTO;
+import currencyExchange.dto.CurrencyDto;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            List<CurrencyDTO> currencies = currencyService.getAllCurrencies();
+            List<CurrencyDto> currencies = currencyService.getAllCurrencies();
             utils.sendResponse(response, 200, currencies);
         } catch (SQLException e) {
             Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
@@ -53,7 +53,7 @@ public class CurrenciesServlet extends HttpServlet {
         }
 
         try {
-            CurrencyDTO currency = currencyService.addCurrency(name, code, sign);
+            CurrencyDto currency = currencyService.addCurrency(name, code, sign);
             utils.sendResponse(response, 201, currency);
         } catch (ElementAlreadyExistsException e) {
             Map<String, String> errorResponse = Map.of("message", "Данная валюта уже существует");
