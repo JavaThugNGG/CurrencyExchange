@@ -63,11 +63,10 @@ public class ExchangeRateDao {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return ExchangeRateDto.parseToExchangeRateDTO(rs);
-            } else {
-                throw new ElementNotFoundException();
             }
-
+            throw new ElementNotFoundException();
         }
+
     }
 
     public void updateRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
@@ -124,9 +123,8 @@ public class ExchangeRateDao {
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1) > 0;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 }

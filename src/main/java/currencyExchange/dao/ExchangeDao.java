@@ -34,9 +34,8 @@ public class ExchangeDao {
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return RawExchangeDto.parseToRawExchangeDTO(resultSet, amount);
-            } else {
-                throw new SQLException();
             }
+            throw new SQLException();
         }
     }
 }

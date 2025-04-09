@@ -21,9 +21,8 @@ public class CurrencyDao {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return CurrencyDto.parseToCurrencyDTO(rs);
-            } else {
-                throw new ElementNotFoundException();
             }
+            throw new ElementNotFoundException();
         }
     }
 
@@ -71,9 +70,8 @@ public class CurrencyDao {
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1) > 0;
-            } else {
-                return false;
             }
+            return false;
         }
     }
 }
