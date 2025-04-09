@@ -1,6 +1,6 @@
-package currencyExchange.DAO;
+package currencyExchange.dao;
 
-import currencyExchange.DTO.RawExchangeDTO;
+import currencyExchange.dto.RawExchangeDTO;
 import currencyExchange.db.DatabaseConnectionProvider;
 
 import java.math.BigDecimal;

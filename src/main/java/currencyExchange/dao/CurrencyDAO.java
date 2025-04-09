@@ -1,6 +1,6 @@
-package currencyExchange.DAO;
+package currencyExchange.dao;
 
-import currencyExchange.DTO.CurrencyDTO;
+import currencyExchange.dto.CurrencyDTO;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
 
