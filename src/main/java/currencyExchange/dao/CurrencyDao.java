@@ -3,6 +3,7 @@ package currencyExchange.dao;
 import currencyExchange.dto.CurrencyDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
+import currencyExchange.mappers.CurrencyMapper;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CurrencyDao {
             stmt.setString(1, code);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return CurrencyDto.parseToCurrencyDTO(rs);
+                return CurrencyMapper.toDto(rs);
             }
             throw new ElementNotFoundException();
         }
@@ -36,7 +37,7 @@ public class CurrencyDao {
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                currencies.add(CurrencyDto.parseToCurrencyDTO(rs));
+                currencies.add(CurrencyMapper.toDto(rs));
             }
         }
         return currencies;

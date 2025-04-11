@@ -7,6 +7,7 @@ import currencyExchange.dto.RawExchangeDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.dao.ExchangeDao;
 import currencyExchange.dto.ExchangeDto;
+import currencyExchange.mappers.ExchangeMapper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -68,7 +69,7 @@ public class ExchangeService {
         BigDecimal rate = rawExchangeDTO.getRate();
         BigDecimal convertedAmount = rate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-        return ExchangeDto.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+        return ExchangeMapper.toDto(rawExchangeDTO, rate, amount, roundedConvertedAmount);
     }
 
     private ExchangeDto convertAmountFromReversedRate(RawExchangeDto rawExchangeDTO, BigDecimal amount) throws SQLException {
@@ -76,7 +77,7 @@ public class ExchangeService {
         BigDecimal reversedRate = BigDecimal.ONE.divide(rate, 8, RoundingMode.HALF_UP);
         BigDecimal convertedAmount = reversedRate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);
-        return ExchangeDto.parseToExchangeDTO(rawExchangeDTO, rate, amount, roundedConvertedAmount);
+        return ExchangeMapper.toDto(rawExchangeDTO, rate, amount, roundedConvertedAmount);
     }
 
     private ExchangeDto convertRateFromCrossRate(CurrencyDto baseCurrency, CurrencyDto targetCurrency, BigDecimal rate1, BigDecimal rate2, BigDecimal amount) {

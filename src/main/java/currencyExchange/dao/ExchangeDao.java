@@ -2,6 +2,8 @@ package currencyExchange.dao;
 
 import currencyExchange.dto.RawExchangeDto;
 import currencyExchange.db.DatabaseConnectionProvider;
+import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.mappers.RawExchangeMapper;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -33,9 +35,9 @@ public class ExchangeDao {
             stmt.setString(2, targetCurrencyCode);
             ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
-                return RawExchangeDto.parseToRawExchangeDTO(resultSet, amount);
+                return RawExchangeMapper.toDto(resultSet, amount);
             }
-            throw new SQLException();
+            throw new ElementNotFoundException();
         }
     }
 }

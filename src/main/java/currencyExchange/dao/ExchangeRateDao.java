@@ -3,6 +3,7 @@ package currencyExchange.dao;
 import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
+import currencyExchange.mappers.ExchangeRateMapper;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -32,7 +33,7 @@ public class ExchangeRateDao {
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                exchangeRates.add(ExchangeRateDto.parseToExchangeRateDTO(rs));
+                exchangeRates.add(ExchangeRateMapper.toDto(rs));
             }
         }
         return exchangeRates;
@@ -62,7 +63,7 @@ public class ExchangeRateDao {
             stmt.setString(2, targetCurrencyCode);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return ExchangeRateDto.parseToExchangeRateDTO(rs);
+                return ExchangeRateMapper.toDto(rs);
             }
             throw new ElementNotFoundException();
         }
