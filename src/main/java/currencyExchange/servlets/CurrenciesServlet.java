@@ -1,6 +1,8 @@
 package currencyExchange.servlets;
 
 import currencyExchange.dto.CurrencyDto;
+import currencyExchange.mappers.CurrencyMapper;
+import currencyExchange.validators.CurrencyValidator;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import java.util.Map;
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = new CurrencyService();
+    private final CurrencyValidator currencyValidator = new CurrencyValidator();
     private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -34,19 +37,19 @@ public class CurrenciesServlet extends HttpServlet {
         String name = request.getParameter("name");
         String sign = request.getParameter("sign");
 
-        if (!currencyService.validateCode(code)) {
+        if (!currencyValidator.validateCode(code)) {
             Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент code для добавления валюты");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-        if (!currencyService.validateName(name)) {
+        if (!currencyValidator.validateName(name)) {
             Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент name для добавления валюты");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-        if (!currencyService.validateSign(sign)) {
+        if (!currencyValidator.validateSign(sign)) {
             Map<String, String> errorResponse = Map.of("message", "Некорректный аргумент sign для добавления валюты");
             utils.sendResponse(response, 400, errorResponse);
             return;

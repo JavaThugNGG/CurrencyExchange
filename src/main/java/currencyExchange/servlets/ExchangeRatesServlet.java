@@ -2,7 +2,9 @@ package currencyExchange.servlets;
 
 import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.processors.ExchangeRateProcessor;
 import currencyExchange.utils.Utils;
+import currencyExchange.validators.ExchangeRateValidator;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +21,8 @@ import java.util.Map;
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
+    private final ExchangeRateProcessor exchangeRateProcessor = new ExchangeRateProcessor();
     private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -36,7 +40,7 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
         String rateString = request.getParameter("rate");
 
-        if (!exchangeRateService.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
+        if (!exchangeRateValidator.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
             Map<String, String> errorResponse = Map.of("message", "Отсутствуют необходимые параметры запроса или они некорректные");    //400
             utils.sendResponse(response, 400, errorResponse);
             return;
@@ -48,7 +52,7 @@ public class ExchangeRatesServlet extends HttpServlet {
             return;
         }
 
-        BigDecimal rate = exchangeRateService.normalizeRate(rateString);
+        BigDecimal rate = exchangeRateProcessor.normalizeRate(rateString);
 
         try {
             exchangeRateService.addRate(baseCurrencyCode, targetCurrencyCode, rate);

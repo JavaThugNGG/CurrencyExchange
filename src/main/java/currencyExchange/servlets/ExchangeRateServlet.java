@@ -1,7 +1,9 @@
 package currencyExchange.servlets;
 
 import currencyExchange.dto.ExchangeRateDto;
+import currencyExchange.processors.ExchangeRateProcessor;
 import currencyExchange.utils.Utils;
+import currencyExchange.validators.ExchangeRateValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +20,8 @@ import java.util.Map;
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
+    private final ExchangeRateProcessor exchangeRateProcessor = new ExchangeRateProcessor();
     private final Utils utils = new Utils();
 
     @Override
@@ -32,15 +36,15 @@ public class ExchangeRateServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestPath = request.getPathInfo();
 
-        if (!exchangeRateService.validatePathForGet(requestPath)) {
+        if (!exchangeRateValidator.validatePathForGet(requestPath)) {
             Map<String, String> errorResponse = Map.of("message", "Некорректный URL запроса");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-        String path = exchangeRateService.getPathWithoutSlash(requestPath);
-        String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
-        String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
+        String path = exchangeRateProcessor.getPathWithoutSlash(requestPath);
+        String baseCurrencyCode = exchangeRateProcessor.splitBaseCurrency(path);
+        String targetCurrencyCode = exchangeRateProcessor.splitTargetCurrency(path);
 
         try {
             ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
@@ -59,25 +63,25 @@ public class ExchangeRateServlet extends HttpServlet {
     public void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestPath = request.getPathInfo();
 
-        String path = exchangeRateService.getPathWithoutSlash(requestPath);
-        String baseCurrencyCode = exchangeRateService.splitBaseCurrency(path);
-        String targetCurrencyCode = exchangeRateService.splitTargetCurrency(path);
+        String path = exchangeRateProcessor.getPathWithoutSlash(requestPath);
+        String baseCurrencyCode = exchangeRateProcessor.splitBaseCurrency(path);
+        String targetCurrencyCode = exchangeRateProcessor.splitTargetCurrency(path);
 
-        if (!exchangeRateService.validatePathForPatch(requestPath)) {
+        if (!exchangeRateValidator.validatePathForPatch(requestPath)) {
             Map<String, String> errorResponse = Map.of("message", "Отсутствует нужное поле формы или некорректные параметры");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-        String rateString = exchangeRateService.parseRateForPatch(request);
+        String rateString = exchangeRateProcessor.parseRateForPatch(request);
 
-        if (!exchangeRateService.validateRate(rateString)) {
+        if (!exchangeRateValidator.validateRate(rateString)) {
             Map<String, String> errorResponse = Map.of("message", "параметр rate некорректный");
             utils.sendResponse(response, 400, errorResponse);
             return;
         }
 
-        BigDecimal rate = exchangeRateService.normalizeRate(rateString);
+        BigDecimal rate = exchangeRateProcessor.normalizeRate(rateString);
 
         try {
             exchangeRateService.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
