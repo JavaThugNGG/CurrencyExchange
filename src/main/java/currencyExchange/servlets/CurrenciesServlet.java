@@ -62,7 +62,7 @@ public class CurrenciesServlet extends HttpServlet {
             Map<String, String> errorResponse = Map.of("message", "Данная валюта уже существует");
             utils.sendResponse(response, 409, errorResponse);
         } catch (SQLException e) {
-            Map<String, String> errorResponse = Map.of("message","Ошибка взаимодействия с базой данных");
+            Map<String, String> errorResponse = Map.of("message", "Ошибка взаимодействия с базой данных");
             utils.sendResponse(response, 500, errorResponse);
         }
     }

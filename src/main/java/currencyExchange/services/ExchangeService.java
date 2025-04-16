@@ -15,8 +15,7 @@ public class ExchangeService {
     private final ExchangeProcessor exchangeProcessor = new ExchangeProcessor();
     private final ExchangeRateDao exchangeRateDAO = new ExchangeRateDao();
     private final ExchangeDao exchangeDAO = new ExchangeDao();
-    private final CurrencyDao currencyDAO = new CurrencyDao();
-    private final String INTERMEDIATE_CURRENCY_CODE = "USD";
+    private static final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
     public ExchangeDto exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
         if(isRateExists(baseCurrencyCode, targetCurrencyCode)) {
@@ -30,15 +29,13 @@ public class ExchangeService {
         }
 
         if(isCrossRateExists(baseCurrencyCode, targetCurrencyCode)) {
-            RawExchangeDto rawExchangeDTO1 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
-            RawExchangeDto rawExchangeDTO2 = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
-            BigDecimal rate1 = rawExchangeDTO1.getRate();
-            BigDecimal rate2 = rawExchangeDTO2.getRate();
-
-            CurrencyDto baseCurrency = currencyDAO.getCurrency(baseCurrencyCode);
-            CurrencyDto targetCurrency = currencyDAO.getCurrency(targetCurrencyCode);
-
-            return exchangeProcessor.convertRateFromCrossRate(baseCurrency, targetCurrency, rate1, rate2, amount);
+            RawExchangeDto base = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
+            RawExchangeDto target = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
+            BigDecimal baseRate = base.getRate();
+            BigDecimal targetRate = target.getRate();
+            CurrencyDto baseCurrency = base.getBaseCurrency();
+            CurrencyDto targetCurrency = target.getBaseCurrency();
+            return exchangeProcessor.convertRateFromCrossRate(baseCurrency, targetCurrency, baseRate, targetRate, amount);
         }
         throw new ElementNotFoundException();
     }
