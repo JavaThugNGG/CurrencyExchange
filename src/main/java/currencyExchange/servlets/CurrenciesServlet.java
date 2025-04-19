@@ -14,7 +14,7 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    private final CurrencyService currencyService = new CurrencyService();
+    private final CurrencyService currencyService = new CurrencyService();//
     private final CurrencyValidator currencyValidator = new CurrencyValidator();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
