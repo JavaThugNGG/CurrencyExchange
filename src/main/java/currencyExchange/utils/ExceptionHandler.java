@@ -6,13 +6,11 @@ import java.util.Map;
 
 
 public class ExceptionHandler {
-    private static final JsonResponseWriter utils = new JsonResponseWriter();
-
     public static void handleException(HttpServletResponse resp, Throwable throwable) throws IOException {
         int status = getStatusCode(throwable);
         String error = throwable.getMessage();
         Map<String, String> errorResponse = Map.of("message", error);
-        utils.sendResponse(resp, status, errorResponse);
+        JsonResponseWriter.sendResponse(resp, status, errorResponse);
     }
 
     private static int getStatusCode(Throwable throwable) {
