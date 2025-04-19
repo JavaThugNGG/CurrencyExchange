@@ -2,27 +2,23 @@ package currencyExchange.servlets;
 
 import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.processors.ExchangeRateProcessor;
-import currencyExchange.utils.Utils;
+import currencyExchange.utils.JsonResponseWriter;
 import currencyExchange.validators.ExchangeRateValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.services.ExchangeRateService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.Map;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
     private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
     private final ExchangeRateProcessor exchangeRateProcessor = new ExchangeRateProcessor();
-    private final Utils utils = new Utils();
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -44,7 +40,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
         ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
 
-        utils.sendResponse(response, 200, exchangeRate);   //не забудь вот это везде позасылать
+        JsonResponseWriter.sendResponse(response, 200, exchangeRate);   //не забудь вот это везде позасылать
     }
 
     public void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -64,6 +60,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
         exchangeRateService.updateRate(baseCurrencyCode, targetCurrencyCode, rate);
         ExchangeRateDto updatedRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
-        utils.sendResponse(response, 200, updatedRate);
+        JsonResponseWriter.sendResponse(response, 200, updatedRate);
     }
 }

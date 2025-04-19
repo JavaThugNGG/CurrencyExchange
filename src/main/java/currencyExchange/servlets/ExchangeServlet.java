@@ -7,21 +7,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import currencyExchange.dto.ExchangeDto;
-import currencyExchange.exceptions.ElementNotFoundException;
-import currencyExchange.utils.Utils;
+import currencyExchange.utils.JsonResponseWriter;
 import currencyExchange.services.ExchangeService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.Map;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
     private final ExchangeService exchangeService = new ExchangeService();
     private final ExchangeValidator exchangeValidator = new ExchangeValidator();
     private final ExchangeProcessor exchangeProcessor = new ExchangeProcessor();
-    private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String from = request.getParameter("from");
@@ -32,6 +28,6 @@ public class ExchangeServlet extends HttpServlet {
         BigDecimal amount = new BigDecimal(request.getParameter("amount"));
 
         ExchangeDto exchangeDTO = exchangeService.exchange(from, to, amount);
-        utils.sendResponse(response, 200, exchangeDTO);
+        JsonResponseWriter.sendResponse(response, 200, exchangeDTO);
     }
 }

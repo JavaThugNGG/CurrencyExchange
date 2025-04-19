@@ -5,10 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class Utils {
+public class JsonResponseWriter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void sendResponse(HttpServletResponse response, int status, Object data) throws IOException {
+    public static void sendResponse(HttpServletResponse response, int status, Object data) throws IOException {
         response.setContentType("application/json");
         response.setStatus(status);
         try (PrintWriter out = response.getWriter()) {

@@ -6,7 +6,7 @@ import java.util.Map;
 
 
 public class ExceptionHandler {
-    private static final Utils utils = new Utils();
+    private static final JsonResponseWriter utils = new JsonResponseWriter();
 
     public static void handleException(HttpServletResponse resp, Throwable throwable) throws IOException {
         int status = getStatusCode(throwable);
