@@ -2,6 +2,7 @@ package currencyExchange.dao;
 
 import currencyExchange.dto.RawExchangeDto;
 import currencyExchange.db.DatabaseConnectionProvider;
+import currencyExchange.exceptions.DatabaseException;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.mappers.RawExchangeMapper;
 
@@ -40,7 +41,7 @@ public class ExchangeDao {
             throw new ElementNotFoundException("Запрашиваемый элемент не найден");
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
     }
 }

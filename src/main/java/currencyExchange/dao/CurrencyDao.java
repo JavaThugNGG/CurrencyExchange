@@ -1,6 +1,7 @@
 package currencyExchange.dao;
 
 import currencyExchange.dto.CurrencyDto;
+import currencyExchange.exceptions.DatabaseException;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
 import currencyExchange.mappers.CurrencyMapper;
@@ -26,7 +27,7 @@ public class CurrencyDao {
             throw new ElementNotFoundException("Запрашиваемая валюта не найдена");
         }
         catch (SQLException e) {
-            throw new RuntimeException("Ошибка при работе с базой данных");
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
     }
 
@@ -44,7 +45,7 @@ public class CurrencyDao {
             }
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
         return currencies;
     }
@@ -64,7 +65,7 @@ public class CurrencyDao {
             return generatedKeys.getLong(1);
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
     }
 
@@ -84,7 +85,7 @@ public class CurrencyDao {
             return false;
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
     }
 }

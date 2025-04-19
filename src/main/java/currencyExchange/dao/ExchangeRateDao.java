@@ -1,6 +1,7 @@
 package currencyExchange.dao;
 
 import currencyExchange.dto.ExchangeRateDto;
+import currencyExchange.exceptions.DatabaseException;
 import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.db.DatabaseConnectionProvider;
 import currencyExchange.mappers.ExchangeRateMapper;
@@ -139,7 +140,7 @@ public class ExchangeRateDao {
             return false;
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Ошибка при работе с базой данных");
         }
     }
 }
