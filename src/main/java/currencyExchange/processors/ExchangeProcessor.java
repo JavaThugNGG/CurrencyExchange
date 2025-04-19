@@ -33,10 +33,10 @@ public class ExchangeProcessor {
         }
     }
 
-    public ExchangeDto convertRateFromCrossRate(CurrencyDto baseCurrency, CurrencyDto targetCurrency, BigDecimal rate1, BigDecimal rate2, BigDecimal amount) {
-        BigDecimal inverseRate1 = BigDecimal.ONE.divide(rate1, 8, RoundingMode.HALF_UP);
-        BigDecimal inverseRate2 = BigDecimal.ONE.divide(rate2, 8, RoundingMode.HALF_UP);
-        BigDecimal rate = inverseRate1.divide(inverseRate2, 8, RoundingMode.HALF_UP);
+    public ExchangeDto convertRateFromCrossRate(CurrencyDto baseCurrency, CurrencyDto targetCurrency, BigDecimal baseRate, BigDecimal targetRate, BigDecimal amount) {
+        BigDecimal inverseBaseRate = BigDecimal.ONE.divide(baseRate, 8, RoundingMode.HALF_UP);
+        BigDecimal inverseTargetRate = BigDecimal.ONE.divide(targetRate, 8, RoundingMode.HALF_UP);
+        BigDecimal rate = inverseBaseRate.divide(inverseTargetRate, 8, RoundingMode.HALF_UP);
 
         BigDecimal convertedAmount = rate.multiply(amount);
         BigDecimal roundedConvertedAmount = convertedAmount.setScale(2, RoundingMode.HALF_UP);

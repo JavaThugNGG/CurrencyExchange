@@ -24,7 +24,6 @@ public class ExchangeRateMapper {
                 rs.getString("targetSign"));
 
         BigDecimal rate = rs.getBigDecimal("rate");
-
         return new ExchangeRateDto(id, baseCurrency, targetCurrency, rate);
     }
 }

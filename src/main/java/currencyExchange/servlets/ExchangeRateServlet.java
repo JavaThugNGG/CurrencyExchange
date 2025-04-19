@@ -39,7 +39,6 @@ public class ExchangeRateServlet extends HttpServlet {
         String targetCurrencyCode = exchangeRateProcessor.splitTargetCurrency(path);
 
         ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
-
         JsonResponseWriter.sendResponse(response, 200, exchangeRate);   //не забудь вот это везде позасылать
     }
 

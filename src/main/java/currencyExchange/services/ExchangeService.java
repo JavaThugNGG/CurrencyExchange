@@ -8,6 +8,7 @@ import currencyExchange.exceptions.ElementNotFoundException;
 import currencyExchange.dao.ExchangeDao;
 import currencyExchange.dto.ExchangeDto;
 import currencyExchange.processors.ExchangeProcessor;
+
 import java.math.BigDecimal;
 
 public class ExchangeService {
@@ -17,17 +18,17 @@ public class ExchangeService {
     private static final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
     public ExchangeDto exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
-        if(isRateExists(baseCurrencyCode, targetCurrencyCode)) {
+        if (isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDto rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
             return exchangeProcessor.convertAmountFromStraightRate(rawExchangeDTO, amount);
         }
 
-        if(isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
+        if (isReversedRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDto rawExchangeDTO = exchangeDAO.getRate(targetCurrencyCode, baseCurrencyCode, amount);
             return exchangeProcessor.convertAmountFromReversedRate(rawExchangeDTO, amount);
         }
 
-        if(isCrossRateExists(baseCurrencyCode, targetCurrencyCode)) {
+        if (isCrossRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDto base = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode, amount);
             RawExchangeDto target = exchangeDAO.getRate(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode, amount);
             BigDecimal baseRate = base.getRate();

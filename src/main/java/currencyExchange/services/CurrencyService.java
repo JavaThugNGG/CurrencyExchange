@@ -3,6 +3,7 @@ package currencyExchange.services;
 import currencyExchange.dao.CurrencyDao;
 import currencyExchange.dto.CurrencyDto;
 import currencyExchange.exceptions.ElementAlreadyExistsException;
+
 import java.util.List;
 
 public class CurrencyService {
@@ -20,8 +21,8 @@ public class CurrencyService {
         if (currencyDAO.isCurrencyExists(code)) {
             throw new ElementAlreadyExistsException("Данная валюта уже существует");
         }
-            long id = currencyDAO.insertCurrency(fullName, code, sign);
-            return new CurrencyDto(id, fullName, code, sign);
+        long id = currencyDAO.insertCurrency(fullName, code, sign);
+        return new CurrencyDto(id, fullName, code, sign);
     }
 }
 

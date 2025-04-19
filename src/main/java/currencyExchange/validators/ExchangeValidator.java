@@ -1,6 +1,5 @@
 package currencyExchange.validators;
 
-import java.sql.SQLException;
 
 public class ExchangeValidator {
     public void validateAmount(String amount) {
