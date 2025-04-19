@@ -25,25 +25,9 @@ public class CurrencyServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestPath = request.getPathInfo();
 
-        if (!currencyValidator.validatePath(requestPath)) {
-            Map<String, String> errorResponse = Map.of("message", "Некорректный URL запроса");
-            utils.sendResponse(response, 400, errorResponse);
-            return;
-        }
-
+        currencyValidator.validatePath(requestPath);
         String currencyCode = currencyProcessor.getCurrencyCodeWithoutSlash(requestPath);
-
-        try {
-            CurrencyDto currency = currencyService.getCurrency(currencyCode);
-            utils.sendResponse(response, 200, currency);
-        }
-        catch (SQLException e) {
-            Map<String, String> errorResponse = Map.of("message", "Ошибка взаоимодействия с базой данных");
-            utils.sendResponse(response, 500, errorResponse);
-        }
-        catch (ElementNotFoundException e) {
-            Map<String, String> errorResponse = Map.of("message", "Запрашиваемая валюта не найдена");
-            utils.sendResponse(response, 404, errorResponse);
-        }
+        CurrencyDto currency = currencyService.getCurrency(currencyCode);
+        utils.sendResponse(response, 200, currency);
     }
 }

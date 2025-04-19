@@ -7,23 +7,32 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 public class ExchangeRateValidator {
-    public boolean validatePathForGet(String path) {
-        return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}$");
+    public void validatePathForGet(String path) {
+        if ((path == null) || (!path.matches("^/[A-Z]{3}[A-Z]{3}$"))) {
+            throw new IllegalArgumentException("Некорректный URL запроса");
+        }
     }
 
-    public boolean validatePathForPatch(String path) {
-        return path != null && path.matches("^/[A-Z]{3}[A-Z]{3}");
+    public void validatePathForPatch(String path) {
+        if ((path == null) || (!path.matches("^/[A-Z]{3}[A-Z]{3}"))) {
+            throw new IllegalArgumentException("Отсутствует нужное поле формы или некорректные параметры");
+        }
     }
 
-    public boolean validateParameters(String baseCode, String targetCode, String rate) {
-        return baseCode != null & targetCode != null && baseCode.matches("([A-Za-z]{1,3})") && targetCode.matches("([A-Za-z]{1,3})") && validateRate(rate);
+    public void validateParameters(String baseCode, String targetCode, String rate) {
+        if ((baseCode == null) || (targetCode == null) || (!baseCode.matches("([A-Za-z]{1,3})")) || (!targetCode.matches("([A-Za-z]{1,3})"))) {
+            throw new IllegalArgumentException("Отсутсвуют необходимые парамметры, либо они некорректные");
+        }
+        validateRate(rate);
     }
 
-    public boolean validateRate(String rate) {
+    public void validateRate(String rate) {
         if (rate == null) {
-            return false;
+            throw new IllegalArgumentException("Параметр rate некорректный");
         }
         String normalizedRate = rate.replace(",", ".");
-        return normalizedRate.matches("\\d+(\\.\\d{1,7})?") && new BigDecimal(normalizedRate).compareTo(BigDecimal.ZERO) > 0;
+        if (!normalizedRate.matches("\\d+(\\.\\d{1,7})?") || !(new BigDecimal(normalizedRate).compareTo(BigDecimal.ZERO) > 0)) {
+            throw new IllegalArgumentException("Параметр rate некорректный");
+        }
     }
 }

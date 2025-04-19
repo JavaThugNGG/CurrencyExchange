@@ -9,7 +9,6 @@ import currencyExchange.dao.ExchangeDao;
 import currencyExchange.dto.ExchangeDto;
 import currencyExchange.processors.ExchangeProcessor;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 
 public class ExchangeService {
     private final ExchangeProcessor exchangeProcessor = new ExchangeProcessor();
@@ -17,7 +16,7 @@ public class ExchangeService {
     private final ExchangeDao exchangeDAO = new ExchangeDao();
     private static final String INTERMEDIATE_CURRENCY_CODE = "USD";
 
-    public ExchangeDto exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
+    public ExchangeDto exchange(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
         if(isRateExists(baseCurrencyCode, targetCurrencyCode)) {
             RawExchangeDto rawExchangeDTO = exchangeDAO.getRate(baseCurrencyCode, targetCurrencyCode, amount);
             return exchangeProcessor.convertAmountFromStraightRate(rawExchangeDTO, amount);
@@ -37,18 +36,18 @@ public class ExchangeService {
             CurrencyDto targetCurrency = target.getBaseCurrency();
             return exchangeProcessor.convertRateFromCrossRate(baseCurrency, targetCurrency, baseRate, targetRate, amount);
         }
-        throw new ElementNotFoundException();
+        throw new ElementNotFoundException("Запрашиваемая валюта не найдена");
     }
 
-    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) {
         return exchangeRateDAO.isRateExists(baseCurrencyCode, targetCurrencyCode);
     }
 
-    public boolean isReversedRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public boolean isReversedRateExists(String baseCurrencyCode, String targetCurrencyCode) {
         return exchangeRateDAO.isRateExists(targetCurrencyCode, baseCurrencyCode);
     }
 
-    public boolean isCrossRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public boolean isCrossRateExists(String baseCurrencyCode, String targetCurrencyCode) {
         return exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, baseCurrencyCode) && exchangeRateDAO.isRateExists(INTERMEDIATE_CURRENCY_CODE, targetCurrencyCode);
     }
 }

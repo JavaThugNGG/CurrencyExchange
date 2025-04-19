@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExchangeRateDao {
-    public List<ExchangeRateDto> getAllRates() throws SQLException {
+    public List<ExchangeRateDto> getAllRates() {
         List<ExchangeRateDto> exchangeRates = new ArrayList<>();
         String query = """
                 SELECT er.id AS rateId,
@@ -36,10 +36,13 @@ public class ExchangeRateDao {
                 exchangeRates.add(ExchangeRateMapper.toDto(rs));
             }
         }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return exchangeRates;
     }
 
-    public ExchangeRateDto getRate(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public ExchangeRateDto getRate(String baseCurrencyCode, String targetCurrencyCode) {
         String query = """
                 SELECT er.id AS rateId,
                 er.rate AS rate,
@@ -65,12 +68,14 @@ public class ExchangeRateDao {
             if (rs.next()) {
                 return ExchangeRateMapper.toDto(rs);
             }
-            throw new ElementNotFoundException();
+            throw new ElementNotFoundException("Запрашиваемый элемент не найден");
         }
-
+        catch (SQLException e) {
+            throw new RuntimeException("Ошибка при взаимодействии с базой данных");
+        }
     }
 
-    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+    public void updateRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         String query = """
                 UPDATE exchange_rates
                 SET rate = ?
@@ -85,9 +90,12 @@ public class ExchangeRateDao {
             stmt.setString(3, targetCurrencyCode);
             stmt.executeUpdate();
         }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void insertRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) throws SQLException {
+    public void insertRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal rate) {
         String query =  """
                         INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate)
                         VALUES (
@@ -104,9 +112,12 @@ public class ExchangeRateDao {
             stmt.setBigDecimal(3, rate);
             stmt.executeUpdate();
         }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
+    public boolean isRateExists(String baseCurrencyCode, String targetCurrencyCode) {
         String query =  """
                         SELECT id
                         FROM exchange_rates
@@ -126,6 +137,9 @@ public class ExchangeRateDao {
                 return resultSet.getInt(1) > 0;
             }
             return false;
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

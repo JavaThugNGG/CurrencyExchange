@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ExchangeDao {
-    public RawExchangeDto getRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) throws SQLException {
+    public RawExchangeDto getRate(String baseCurrencyCode, String targetCurrencyCode, BigDecimal amount) {
         String query = """
                 SELECT c1.id AS baseId,
                 c1.full_name AS baseName,
@@ -37,7 +37,10 @@ public class ExchangeDao {
             if (resultSet.next()) {
                 return RawExchangeMapper.toDto(resultSet, amount);
             }
-            throw new ElementNotFoundException();
+            throw new ElementNotFoundException("Запрашиваемый элемент не найден");
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

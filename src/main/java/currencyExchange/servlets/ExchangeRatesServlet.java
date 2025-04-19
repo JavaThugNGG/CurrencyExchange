@@ -2,6 +2,7 @@ package currencyExchange.servlets;
 
 import currencyExchange.dto.ExchangeRateDto;
 import currencyExchange.exceptions.ElementNotFoundException;
+import currencyExchange.processors.ExchangeProcessor;
 import currencyExchange.processors.ExchangeRateProcessor;
 import currencyExchange.utils.Utils;
 import currencyExchange.validators.ExchangeRateValidator;
@@ -23,16 +24,12 @@ public class ExchangeRatesServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
     private final ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
     private final ExchangeRateProcessor exchangeRateProcessor = new ExchangeRateProcessor();
+    private final ExchangeProcessor exchangeProcessor = new ExchangeProcessor();
     private final Utils utils = new Utils();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            List<ExchangeRateDto> exchangeRates = exchangeRateService.getAllRates();
-            utils.sendResponse(response, 200, exchangeRates);
-        } catch (SQLException e) {
-            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
-            utils.sendResponse(response, 500, errorResponse);
-        }
+        List<ExchangeRateDto> exchangeRates = exchangeRateService.getAllRates();
+        utils.sendResponse(response, 200, exchangeRates);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -40,33 +37,14 @@ public class ExchangeRatesServlet extends HttpServlet {
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
         String rateString = request.getParameter("rate");
 
-        if (!exchangeRateValidator.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString)) {
-            Map<String, String> errorResponse = Map.of("message", "Отсутствуют необходимые параметры запроса или они некорректные");    //400
-            utils.sendResponse(response, 400, errorResponse);
-            return;
-        }
+        exchangeRateValidator.validateParameters(baseCurrencyCode, targetCurrencyCode, rateString);
 
-        if (baseCurrencyCode.equals(targetCurrencyCode)) {
-            Map<String, String> errorResponse = Map.of("message", "Валютная пара должна состоять из разных валют");
-            utils.sendResponse(response, 400, errorResponse);
-            return;
-        }
+        exchangeProcessor.isSameCurrencies(baseCurrencyCode, targetCurrencyCode);
 
         BigDecimal rate = exchangeRateProcessor.normalizeRate(rateString);
 
-        try {
-            exchangeRateService.addRate(baseCurrencyCode, targetCurrencyCode, rate);
-            ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
-            utils.sendResponse(response, 201, exchangeRate);
-        } catch (SQLException e) {
-            Map<String, String> errorResponse = Map.of("message", "Ошибка при взаимодействии с базой данных");
-            utils.sendResponse(response, 500, errorResponse);
-        } catch (ElementAlreadyExistsException e) {
-            Map<String, String> errorResponse = Map.of("message", "Данная валютная пара уже существует");
-            utils.sendResponse(response, 409, errorResponse);
-        } catch (ElementNotFoundException e) {
-            Map<String, String> errorResponse = Map.of("message", "Одна/обе валюты из валютной пары не существуют в бд");
-            utils.sendResponse(response, 404, errorResponse);
-        }
+        exchangeRateService.addRate(baseCurrencyCode, targetCurrencyCode, rate);
+        ExchangeRateDto exchangeRate = exchangeRateService.getRate(baseCurrencyCode, targetCurrencyCode);
+        utils.sendResponse(response, 201, exchangeRate);
     }
 }

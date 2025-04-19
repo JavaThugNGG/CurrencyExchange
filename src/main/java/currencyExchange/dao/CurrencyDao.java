@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDao {
-    public CurrencyDto getCurrency(String code) throws SQLException {
+    public CurrencyDto getCurrency(String code)  {
         String query =  """
                         SELECT *
                         FROM currencies
@@ -23,11 +23,14 @@ public class CurrencyDao {
             if (rs.next()) {
                 return CurrencyMapper.toDto(rs);
             }
-            throw new ElementNotFoundException();
+            throw new ElementNotFoundException("Запрашиваемая валюта не найдена");
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Ошибка при работе с базой данных");
         }
     }
 
-    public List<CurrencyDto> getAllCurrencies() throws SQLException {
+    public List<CurrencyDto> getAllCurrencies() {
         List<CurrencyDto> currencies = new ArrayList<>();
         String query =  """
                         SELECT *
@@ -40,10 +43,13 @@ public class CurrencyDao {
                 currencies.add(CurrencyMapper.toDto(rs));
             }
         }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return currencies;
     }
 
-    public long insertCurrency(String fullName, String code, String sign) throws SQLException {
+    public long insertCurrency(String fullName, String code, String sign) {
         String query =  """
                         INSERT INTO currencies (full_name, code, sign)
                         VALUES (?, ?, ?);
@@ -57,9 +63,12 @@ public class CurrencyDao {
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             return generatedKeys.getLong(1);
         }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public boolean isCurrencyExists(String code) throws SQLException {
+    public boolean isCurrencyExists(String code) {
         String query =  """
                         SELECT COUNT(*)
                         FROM currencies
@@ -73,6 +82,9 @@ public class CurrencyDao {
                 return resultSet.getInt(1) > 0;
             }
             return false;
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

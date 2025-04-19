@@ -27,27 +27,11 @@ public class ExchangeServlet extends HttpServlet {
         String from = request.getParameter("from");
         String to = request.getParameter("to");
 
-        if (exchangeProcessor.isSameCurrencies(from, to)) {
-            Map<String, String> errorResponse = Map.of("message", "Валютная пара должна состоять из разных валют");
-            utils.sendResponse(response, 400, errorResponse);
-            return;
-        }
-
-        if (!exchangeValidator.validateAmount(request.getParameter("amount"))) {
-            Map<String, String> errorResponse = Map.of("message", "Некорректное значение поля amount");
-            utils.sendResponse(response, 400, errorResponse);
-            return;
-        }
-
+        exchangeProcessor.isSameCurrencies(from, to);
+        exchangeValidator.validateAmount(request.getParameter("amount"));
         BigDecimal amount = new BigDecimal(request.getParameter("amount"));
 
-        try {
-            ExchangeDto exchangeDTO = exchangeService.exchange(from, to, amount);
-            utils.sendResponse(response, 200, exchangeDTO);
-
-        } catch (SQLException | ElementNotFoundException e) {
-            Map<String, String> errorResponse = Map.of("message", "Запрашиваемая валюта не найдена");
-            utils.sendResponse(response, 500, errorResponse);
-        }
+        ExchangeDto exchangeDTO = exchangeService.exchange(from, to, amount);
+        utils.sendResponse(response, 200, exchangeDTO);
     }
 }
